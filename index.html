@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Işık University: Residence Permit Portal</title>
+<style>
+  :root{
+    --navy:#1E3A8A;
+    --navy-dark:#0F2942;
+    --border:#E2E8F0;
+    --card:#F8FAFC;
+    --text:#1e293b;
+    --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:13px;color:var(--text);background:#fff;overflow-x:hidden;}
+  a{color:#1d4ed8;}
+ 
+  /* ---------- Topbar ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;border-bottom:1px solid var(--border);background:#fff;}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:34px;height:34px;border-radius:6px;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;}
+  .brand-text strong{display:block;font-size:14px;color:var(--text);line-height:1.2;}
+  .brand-text span{font-size:11px;color:var(--muted);}
+  .topbar-right{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;margin-right:5px;}
+  .icon-btn{color:var(--muted);display:inline-flex;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#475569;}
+  .user-name{font-weight:700;color:var(--text);font-size:12px;letter-spacing:.2px;}
+  .logout-link{color:var(--navy);cursor:pointer;text-decoration:underline;font-size:12px;white-space:nowrap;}
+  .lang-switch{display:inline-flex;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;}
+  .lang-switch button{border:none;background:#fff;color:var(--muted);padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;}
+  .lang-switch button.active{background:var(--navy);color:#fff;}
+ 
+  /* ---------- Menu bar ---------- */
+  .menubar{background:var(--navy);color:#fff;display:flex;gap:26px;padding:11px 24px;font-size:13px;}
+  .menubar span{opacity:.9;}
+ 
+  /* ---------- Layout ---------- */
+  .layout{display:flex;align-items:flex-start;min-height:calc(100vh - 108px);}
+  .sidebar{width:220px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding-bottom:20px;}
+  .sidebar-heading{background:#eef2f7;color:var(--navy);font-weight:700;font-size:13px;padding:9px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 4px;}
+  .sidebar-link{display:block;padding:8px 16px;color:#1d4ed8;font-size:13px;cursor:pointer;}
+  .sidebar-link:hover{background:#eef2f7;text-decoration:underline;}
+  .sidebar-link.active{font-weight:700;background:#e8edf7;}
+ 
+  .content{flex:1;min-width:0;padding:24px 28px;overflow-x:hidden;}
+  .banner{background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:11px 16px;border-radius:3px 3px 0 0;}
+  .panel{border:1px solid var(--border);border-top:none;padding:22px;border-radius:0 0 4px 4px;margin-bottom:24px;background:#fff;}
+ 
+  /* ---------- Buttons ---------- */
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--navy);background:#fff;color:var(--navy);padding:7px 13px;border-radius:4px;font-size:13px;cursor:pointer;}
+  .btn:hover{background:#f0f4fb;}
+  .btn-solid{background:var(--navy);color:#fff;}
+  .btn-solid:hover{background:#16306e;}
+  .btn-plain{border:1px solid #cbd5e1;color:var(--text);}
+  .btn-plain:hover{background:#f8fafc;}
+  .btn-icon{padding:6px 8px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .btn-danger{border-color:#fca5a5;color:#b91c1c;}
+  .btn-danger:hover{background:#fef2f2;}
+ 
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{background:var(--card);text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);color:#334155;font-weight:700;white-space:nowrap;}
+  tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle;}
+  tbody tr:hover{background:#fafbfd;}
+  .table-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--muted);}
+  .table-toolbar input{padding:6px 9px;border:1px solid #cbd5e1;border-radius:4px;font-size:13px;width:220px;}
+ 
+  /* ---------- Badges ---------- */
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;border:1px solid transparent;white-space:nowrap;}
+  .badge-green{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
+  .badge-amber{background:#fffbeb;color:#b45309;border-color:#fde68a;}
+  .badge-red{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
+  .badge-gray{background:#f1f5f9;color:#475569;border-color:#e2e8f0;}
+ 
+  select, input[type=text], input[type=date]{font-size:13px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:4px;color:var(--text);background:#fff;}
+ 
+  /* ---------- Detail grid ---------- */
+  .detail-grid{display:grid;grid-template-columns:190px 1fr;row-gap:14px;column-gap:10px;font-size:13px;align-items:center;}
+  .detail-grid .label{color:var(--muted);}
+  .detail-grid .value{color:var(--text);font-weight:600;}
+  .note{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--navy);padding:11px 14px;border-radius:4px;font-size:12.5px;color:#334155;line-height:1.5;}
+ 
+  /* ---------- Checklist ---------- */
+  .checklist-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #f1f5f9;}
+  .checklist-item:last-child{border-bottom:none;}
+  .checklist-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--navy);}
+ 
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:6px;width:100%;max-width:460px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);}
+  .modal-head strong{font-size:14px;}
+  .modal-body{padding:18px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--border);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+  .field select, .field input{width:100%;}
+  .x-btn{cursor:pointer;color:var(--muted);background:none;border:none;padding:2px;}
+ 
+  /* ---------- Login ---------- */
+  .login-wrap{min-height:100vh;background:var(--card);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:36px 32px;width:100%;max-width:380px;text-align:center;}
+  .login-card h1{font-size:16px;margin:14px 0 4px;color:var(--text);}
+  .login-card p{color:var(--muted);font-size:12.5px;margin:0 0 22px;}
+  .login-choice{border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .15s;}
+  .login-choice:hover{border-color:var(--navy);}
+  .login-choice strong{display:block;font-size:13px;color:var(--text);}
+  .login-choice span{font-size:11.5px;color:var(--muted);}
+ 
+  .hidden{display:none !important;}
+  .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .mb{margin-bottom:14px;}
+  .muted{color:var(--muted);}
+</style>
+</head>
+<body>
+ 
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="logo-mark" style="margin:0 auto;">IU</div>
+    <h1>Işık University</h1>
+    <p>Residence Permit Portal. Choose a demo account below.</p>
+ 
+    <div class="login-choice" onclick="login('student')">
+      <strong>Student: Ahmet Yılmaz</strong>
+      <span>Student ID: 20223045</span>
+    </div>
+    <div class="login-choice" onclick="login('office')">
+      <strong>International Office Staff</strong>
+      <span>staff@isik.edu.tr</span>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============ APP SHELL ============ -->
+<div id="appShell" class="hidden">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">IU</div>
+      <div class="brand-text">
+        <strong>Işık Üniversitesi</strong>
+        <span>Residence Permit Portal</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="lang-switch">
+        <button id="langBtnEN" class="active" onclick="setLang('en')">EN</button>
+        <button id="langBtnTR" onclick="setLang('tr')">TR</button>
+      </div>
+      <span><span class="status-dot"></span><span id="lblOnline">Online</span></span>
+      <span id="userLabel" class="user-name"></span>
+      <div class="avatar" id="userAvatar"></div>
+      <span class="logout-link" onclick="logout()" id="lblLogout">Log out</span>
+    </div>
+  </div>
+  <div class="menubar">
+    <span id="lblMenuProcess">Residence Permit Process</span>
+    <span id="lblMenuContact">Contact International Office</span>
+  </div>
+ 
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+ 
+<!-- ============ MODAL: Send Template Mail ============ -->
+<div class="overlay" id="mailOverlay">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-head">
+      <strong id="lblSendMailHead">Send Mail</strong>
+      <button class="x-btn" onclick="closeMailModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mb muted" id="mailModalName" style="font-size:13px;font-weight:700;color:#1e293b;"></div>
+      <div class="field">
+        <label id="lblTemplateLabel">Template</label>
+        <select id="mailTemplateSelect" onchange="updateMailPreview()"></select>
+      </div>
+      <div class="field">
+        <label id="lblNoteInsertLabel">Note to insert (reason, missing item, etc.)</label>
+        <input type="text" id="mailNote" oninput="updateMailPreview()" placeholder="e.g. biometric photo" />
+      </div>
+      <div class="field">
+        <label id="lblPreviewLabel">Preview</label>
+        <div class="note" id="mailPreview" style="white-space:pre-wrap;max-height:220px;overflow:auto;"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-plain" onclick="closeMailModal()" id="lblCancelBtn">Cancel</button>
+      <button class="btn btn-solid" onclick="sendMailNow()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg> <span id="lblOpenClientBtn">Open in Mail Client</span></button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============ MODAL: Office views a student's uploaded documents ============ -->
+<div class="overlay" id="docsOverlay">
+  <div class="modal" style="max-width:520px;max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <strong id="lblUploadedDocsHead">Uploaded Documents</strong>
+      <button class="x-btn" onclick="closeDocsModal()">✕</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;">
+      <div class="mb muted" id="docsModalName" style="font-size:13px;font-weight:700;color:#1e293b;"></div>
+      <div class="note mb" id="lblDocsReferenceText">Documents the student has uploaded on their portal, for reference. The physical/printed copies handed in at the counter remain the official file.</div>
+      <div id="docsModalBody"></div>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0;">
+      <button class="btn btn-plain" onclick="closeDocsModal()" id="lblCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+/* =====================================================================
+   ICONS (inline SVG, minimal line style)
+===================================================================== */
+const ICONS = {
+  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  mail: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>`,
+  download: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>`,
+  upload: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></svg>`,
+  trash: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>`,
+  plus: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
+  search: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+};
+ 
+/* =====================================================================
+   STATE (in-memory only, resets on page reload)
+===================================================================== */
+let requiredDocs = [
+  { text: "Printout of online application form", optional: false },
+  { text: "A printout of declaration form", optional: false },
+  { text: "2x Biometric photo", optional: false },
+  { text: "Physical Passport (photocopy of ID page)", optional: false },
+  { text: "Residency Card (If you have previously)", optional: true },
+  { text: "Student Certificate In Turkish", optional: false },
+  { text: "UETS adress page from PTT(If you had residency before)", optional: true },
+  { text: "Proof of Address Document", optional: false },
+  { text: "First 5 pages of Valid Health Insurance covering Applied Residence period", optional: false },
+  { text: "964TL Tax payment receipt", optional: false },
+];
+ 
+let students = [
+  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", delivered: false, status: "waiting", note: "", receivedLocation: null, receivedDate: null, submittedDate: null, checklist: {}, documents: {} },
+  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", delivered: true, status: "waiting", note: "", receivedLocation: "Maslak Campus", receivedDate: "26.08.2026", submittedDate: null, checklist: {}, documents: {} },
+  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", delivered: true, status: "rejected", note: "Biometric photo missing", receivedLocation: "Maslak Campus", receivedDate: "20.08.2026", submittedDate: null, checklist: {}, documents: {} },
+  { id: "20220034", name: "Layla Haddad", validity: "—", ykn: "", delivered: false, status: "waiting", note: "", receivedLocation: null, receivedDate: null, submittedDate: null, checklist: {}, documents: {} },
+  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", delivered: true, status: "delivered_goc", note: "", receivedLocation: "Şile Campus", receivedDate: "18.08.2026", submittedDate: "21.08.2026", checklist: {}, documents: {} },
+];
+ 
+let batches = [
+  {
+    id: "batch-seed-1",
+    label: nextThursdayLabel(),
+    date: nextThursdayISO(),
+    entries: [
+      { studentId: "20221190", name: "Fatima Al-Sayed", ykn: "99887766550", fileObtainedDate: "2026-08-26", tebligLocation: "Maslak Campus", status: "waiting" },
+      { studentId: "20220034", name: "Layla Haddad", ykn: "", fileObtainedDate: "", tebligLocation: "Maslak Campus", status: "waiting" },
+    ],
+  },
+];
+ 
+let infoForm = { name: null, url: null }; 
+ 
+let mailTemplates = [
+  {
+    id: "tmpl-returned",
+    name: "Files returned: missing documents",
+    subject: "Residence Permit Documents: Action Required",
+    body: "Dear {{name}},\n\nYour residence permit file was returned by the Directorate of Migration Management (Göç İdaresi) because the following document is missing or incorrect: {{missingDoc}}.\n\nReason: {{missingDocsReason}}\n\nCould you please bring the corrected or missing documents to the International Office as soon as possible? Once your file is complete, we will include it in the next Thursday delivery.\n\nThank you,\nInternational Office"
+  },
+  {
+    id: "tmpl-teblig",
+    name: "Come sign for your Tebliğ / Tebellüğ",
+    subject: "Please Visit the Office: Teslim Tesellüm",
+    body: "Dear {{name}},\n\nYour residence permit decision is ready. Please visit the International Office at {{pickupcity}} to sign for your Teslim Tesellüm ({{note}}).\n\nPlease bring a valid ID with you.\n\nThank you,\nInternational Office"
+  },
+];
+ 
+let officeGuide = `Residence Permit Process: Step by Step
+ 
+1. Online Application: Apply online at https://e-ikamet.goc.gov.tr. If your current permit has not expired yet, you can apply up to 59 days before it expires. Submit your file within 10 days of completing the online application.
+ 
+2. Collect Your Files: Gather all required documents from the checklist below, including biometric photos, your printed application form, passport photocopies, address document, health insurance, and previous residence permit card (if you have one).
+ 
+3. Pay the Tax Fee: Pay the residence permit card tax (964 TL for 2026) online or at any Tax Office, then print the receipt and add it to your file.
+ 
+4. Give Fingerprints: Take your files to one of the offices we list for you to give your fingerprints. They will write a code on your printed application form.
+ 
+5. Submit Your Files to Us on a Tuesday: Make sure your online application form date is a maximum of 13 days old. After we submit your files, come back on Friday to collect your Teslim Tesellüm receipt.
+ 
+Please note: Bring copies of files, we do not print out for you. Files submitted more than 13 days after the online application date cannot be accepted. Bring all documents in a clear folder and arrive at least 15 minutes before your appointment.`;
+ 
+const CURRENT_STUDENT_ID = "20223045";
+let role = null; 
+let activeSection = null;
+
+let currentLang = "en";
+
+const TR = {
+  "Online": "Çevrimiçi",
+  "Log out": "Çıkış Yap",
+  "Residence Permit Process": "İkamet Belgesi Süreci",
+  "Contact International Office": "Uluslararası Ofisle İletişime Geç",
+  "Student": "Öğrenci",
+  "Office": "Ofis",
+  "My Status": "Durumum",
+  "Batches": "Partiler",
+  "Declaration Form Upload": "Beyan Formu Yükleme",
+  "Thursday Delivery Batches": "Perşembe Teslimat Partileri",
+  "Search Batches": "Parti Ara",
+  "Delivery date": "Teslimat Tarihi",
+  "Create Batch": "Parti Oluştur",
+  "Search batches": "Partileri ara",
+  "Or pick a date": "Veya bir tarih seçin",
+  "Clear": "Temizle",
+  "Add to Batch": "Partiye Ekle",
+  "Optional": "Opsiyonel",
+  "Required Documents Manager": "Gerekli Belgeler Yöneticisi",
+  "Documents listed here appear automatically on every student's checklist. Tick Optional for a document students don't strictly have to upload; it still shows on their checklist, just without the required warning.": "Burada listelenen belgeler otomatik olarak her öğrencinin kontrol listesinde görünür. Öğrencilerin kesinlikle yüklemesi gerekmeyen bir belge için Opsiyonel seçeneğini işaretleyin; bu belge kontrol listesinde görünmeye devam eder, yalnızca zorunlu uyarısı olmadan görünür.",
+  "Mail Templates": "E-posta Şablonları",
+  "Student Guide": "Öğrenci Rehberi",
+  "This guide is shown to students on their Required Documents Checklist page. Use it for reminders or extra instructions.": "Bu rehber öğrencilerin Gerekli Belgeler Kontrol Listesi sayfasında gösterilir. Hatırlatıcılar veya ek talimatlar için kullanın.",
+  "Template Name": "Şablon Adı",
+  "Subject": "Konu",
+  "Body placeholders:": "Gövde yer tutucuları:",
+  "Templates staff can send to students, for example when files are returned from Göç İdaresi due to a missing document, or when a student needs to come sign for their Teslim Tesellüm. Send a template from any student's row in the Batches page.": "Personelin öğrencilere gönderebileceği şablonlar; örneğin belgeler eksiklik nedeniyle Göç İdaresinden iade edildiğinde veya öğrenci Teslim Tesellüm belgesini imzalamaya gelmesi gerektiğinde.",
+  "My Residence Permit Status": "İkamet Belgesi Durumum",
+  "Student ID": "Öğrenci Numarası",
+  "Name Surname": "Ad Soyad",
+  "Email": "E-posta",
+  "YKN": "YKN",
+  "Residence Permit Validity": "İkamet Belgesi Geçerliliği",
+  "Files Delivered to Office": "Ofise Teslim Edilen Dosyalar",
+  "File Status": "Dosya Durumu",
+  "Required Documents Checklist": "Gerekli Belgeler Kontrol Listesi",
+  "Send Mail": "E-posta Gönder",
+  "Template": "Şablon",
+  "Note to insert (reason, missing item, etc.)": "Eklenecek not (sebep, eksik öğe vb.)",
+  "Preview": "Önizleme",
+  "Cancel": "İptal",
+  "Open in Mail Client": "E-posta İstemcisinde Aç",
+  "Uploaded Documents": "Yüklenen Belgeler",
+  "Close": "Kapat",
+  "Save Guide": "Rehberi Kaydet",
+  "Add Template": "Şablon Ekle",
+  "Upload": "Yükle",
+  "Download": "İndir",
+  "View": "Görüntüle",
+  "Yes": "Evet",
+  "No": "Hayır",
+  "Not submitted yet": "Henüz teslim edilmedi",
+  "Delivered to Göç İdaresi": "Göç İdaresi'ne Teslim Edildi",
+  "Teslim Tesellüm ready": "Teslim Tesellüm Hazır",
+  "Add a new required document...": "Yeni bir gerekli belge ekle...",
+  "Upload the Declaration Form (PDF). Students will be able to download it, fill it in by hand, and sign it at the counter. This file is also what students download from the \"Declaration Form\" item on their Required Documents Checklist — upload a new file here any time to replace it.": "Beyan Formunu (PDF) yükleyin. Öğrenciler bunu indirebilecek, elle doldurabilecek ve veznede imzalayabileceklerdir. Bu dosya aynı zamanda öğrencilerin Gerekli Belgeler Kontrol Listesindeki 'Beyan Formu' öğesinden indirdikleri dosyadır, değiştirmek için buraya istediğiniz zaman yeni bir dosya yükleyebilirsiniz.",
+  "Upload each required document below — this is mandatory before your file can be accepted. You must also bring the physical documents and printouts to the International Office; documents uploaded here are for tracking purposes only and are not reviewed or approved on this portal.": "Aşağıdaki gerekli belgelerin her birini yükleyin; dosyanızın kabul edilebilmesi için bu zorunludur. Ayrıca fiziksel belgeleri ve çıktıları Uluslararası Ofis'e getirmelisiniz; buraya yüklenen belgeler yalnızca takip amaçlıdır ve bu portalda incelenmez veya onaylanmaz.",
+  "Create a batch for a Thursday delivery to Göç İdaresi. Pull students in by Student ID, confirm once their physical file has been taken into the office, and record where the Tebliğ or kimlik should be delivered back to.": "Göç İdaresi'ne Perşembe günü teslimatı için bir parti oluşturun. Öğrencileri Öğrenci Numarası ile içeri alın, fiziksel dosyaları ofise alındıktan sonra onaylayın ve Tebliğ veya kimliğin nereye teslim edileceğini kaydedin.",
+  "Your status will be updated by the International Office once you have physically brought your documents to the counter.": "Belgelerinizi fiziksel olarak vezneye getirdiğinizde durumunuz Uluslararası Ofis tarafından güncellenecektir.",
+  "File Obtained Date": "Dosyanın Ofise Geliş Tarihi"
+};
+
+function t(str) {
+  return currentLang === "tr" ? (TR[str] || str) : str;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById("langBtnEN").classList.toggle("active", lang === "en");
+  document.getElementById("langBtnTR").classList.toggle("active", lang === "tr");
+  applyStaticTranslations();
+  if (role) { renderSidebar(); renderContent(); }
+}
+
+function applyStaticTranslations() {
+  document.getElementById("lblOnline").textContent = t("Online");
+  document.getElementById("lblLogout").textContent = t("Log out");
+  document.getElementById("lblMenuProcess").textContent = t("Residence Permit Process");
+  document.getElementById("lblMenuContact").textContent = t("Contact International Office");
+  
+  // Modals text translations
+  const sendMailHead = document.getElementById("lblSendMailHead");
+  if (sendMailHead) sendMailHead.textContent = t("Send Mail");
+  
+  const templateLabel = document.getElementById("lblTemplateLabel");
+  if (templateLabel) templateLabel.textContent = t("Template");
+  
+  const noteInsertLabel = document.getElementById("lblNoteInsertLabel");
+  if (noteInsertLabel) noteInsertLabel.textContent = t("Note to insert (reason, missing item, etc.)");
+  
+  const previewLabel = document.getElementById("lblPreviewLabel");
+  if (previewLabel) previewLabel.textContent = t("Preview");
+  
+  const cancelBtn = document.getElementById("lblCancelBtn");
+  if (cancelBtn) cancelBtn.textContent = t("Cancel");
+  
+  const openClientBtn = document.getElementById("lblOpenClientBtn");
+  if (openClientBtn) openClientBtn.textContent = t("Open in Mail Client");
+  
+  const uploadedDocsHead = document.getElementById("lblUploadedDocsHead");
+  if (uploadedDocsHead) uploadedDocsHead.textContent = t("Uploaded Documents");
+  
+  const docsReferenceText = document.getElementById("lblDocsReferenceText");
+  if (docsReferenceText) docsReferenceText.textContent = t("Documents the student has uploaded on their portal, for reference. The physical/printed copies handed in at the counter remain the official file.");
+  
+  const closeBtn = document.getElementById("lblCloseBtn");
+  if (closeBtn) closeBtn.textContent = t("Close");
+}
+
+let mailContext = null; 
+ 
+function email(id) { return `${id}@isik.edu.tr`; }
+function getStudent(id) { return students.find(s => s.id === id); }
+function splitName(fullName) {
+  const parts = fullName.trim().split(/\s+/);
+  const last = parts.length > 1 ? parts.pop() : "";
+  return { first: parts.join(" "), last };
+}
+ 
+/* =====================================================================
+   LOGIN / LOGOUT
+===================================================================== */
+function login(r) {
+  role = r;
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("appShell").classList.remove("hidden");
+  applyStaticTranslations();
+ 
+  if (r === "student") {
+    const s = getStudent(CURRENT_STUDENT_ID);
+    document.getElementById("userLabel").textContent = s.name.toUpperCase();
+    document.getElementById("userAvatar").textContent = initials(s.name);
+    activeSection = "status";
+  } else {
+    document.getElementById("userLabel").textContent = "OFFICE STAFF";
+    document.getElementById("userAvatar").textContent = "OS";
+    activeSection = "batches";
+  }
+  renderSidebar();
+  renderContent();
+}
+ 
+function logout() {
+  role = null;
+  document.getElementById("appShell").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+}
+ 
+function initials(name) {
+  return name.split(" ").map(p => p[0]).join("").toUpperCase();
+}
+ 
+/* =====================================================================
+   SIDEBAR
+===================================================================== */
+function renderSidebar() {
+  const el = document.getElementById("sidebar");
+  if (role === "student") {
+    el.innerHTML = `
+      <div class="sidebar-heading">${t("Student")}</div>
+      ${sideLink("status", t("My Status"))}
+      ${sideLink("checklist", t("Required Documents Checklist"))}
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="sidebar-heading">${t("Office")}</div>
+      ${sideLink("batches", t("Batches"))}
+      ${sideLink("docs", t("Required Documents Manager"))}
+      ${sideLink("form", t("Declaration Form Upload"))}
+    `;
+  }
+}
+ 
+function sideLink(key, label) {
+  const active = activeSection === key ? "active" : "";
+  return `<div class="sidebar-link ${active}" onclick="goTo('${key}')">${label}</div>`;
+}
+ 
+function goTo(key) {
+  activeSection = key;
+  renderSidebar();
+  renderContent();
+}
+ 
+/* =====================================================================
+   CONTENT ROUTER
+===================================================================== */
+function renderContent() {
+  const el = document.getElementById("content");
+  if (role === "student") {
+    if (activeSection === "status") el.innerHTML = studentStatusView();
+    if (activeSection === "checklist") el.innerHTML = studentChecklistView();
+  } else {
+    if (activeSection === "batches") el.innerHTML = officeBatchesView();
+    if (activeSection === "docs") el.innerHTML = officeDocsView();
+    if (activeSection === "form") el.innerHTML = officeInfoFormView();
+  }
+  if (role === "office" && activeSection === "batches") filterBatches();
+}
+ 
+/* =====================================================================
+   STATUS BADGE HELPERS
+===================================================================== */
+function deliveredBadge(s) {
+  return s.delivered
+    ? `<span class="badge badge-green">${t("Yes")}</span>`
+    : `<span class="badge badge-gray">${t("No")}</span>`;
+}
+ 
+function todayStr() {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
+function todayISO() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+ 
+function statusBadge(s) {
+  if (!s.delivered) {
+    return `<span class="badge badge-gray">${t("Not submitted yet")}</span>`;
+  }
+  if (s.status === "rejected") {
+    const sub = s.note ? `Reason: ${s.note}` : "";
+    return `<span class="badge badge-red">Returned: missing documents</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+  }
+  if (s.status === "tebligated") {
+    const sub = s.note ? s.note : "Visit the office to sign for your Teslim Tesellüm.";
+    return `<span class="badge badge-amber">${t("Teslim Tesellüm ready")}</span><div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>`;
+  }
+  if (s.status === "delivered_goc") {
+    const sub = s.submittedDate ? `Sent to Göç İdaresi on ${s.submittedDate}` : "";
+    return `<span class="badge badge-green">${t("Delivered to Göç İdaresi")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+  }
+  const loc = s.receivedLocation || "office";
+  const sub = s.receivedDate ? `Received ${s.receivedDate}` : "";
+  return `<span class="badge badge-amber">In ${loc}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+}
+ 
+/* =====================================================================
+   STUDENT: MY STATUS
+===================================================================== */
+function studentStatusView() {
+  const s = getStudent(CURRENT_STUDENT_ID);
+  return `
+    <div class="banner">${t("My Residence Permit Status")}</div>
+    <div class="panel">
+      <div class="detail-grid">
+        <div class="label">${t("Student ID")}</div><div class="value">${s.id}</div>
+        <div class="label">${t("Name Surname")}</div><div class="value">${s.name}</div>
+        <div class="label">${t("Email")}</div><div class="value"><a href="mailto:${email(s.id)}">${email(s.id)}</a></div>
+        <div class="label">${t("YKN")}</div><div class="value">${s.ykn ? s.ykn : '<span class="muted">Not yet assigned by office</span>'}</div>
+        <div class="label">${t("Residence Permit Validity")}</div><div class="value">${s.validity}</div>
+        <div class="label">${t("Files Delivered to Office")}</div><div class="value">${deliveredBadge(s)}</div>
+        <div class="label">${t("File Status")}</div><div class="value">${statusBadge(s)}</div>
+      </div>
+ 
+      ${!s.delivered ? `
+      <div style="margin-top:20px;" class="note">
+        ${t("Your status will be updated by the International Office once you have physically brought your documents to the counter.")}
+      </div>` : `
+      <div style="margin-top:20px;" class="note">
+        Your files have been received by the International Office. Your status above is now maintained by office staff.
+      </div>`}
+    </div>
+  `;
+}
+ 
+/* =====================================================================
+   STUDENT: CHECKLIST
+===================================================================== */
+function studentChecklistView() {
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (!s.documents) s.documents = {};
+  const items = requiredDocs.map((doc, i) => {
+    const isDeclaration = /declaration form/i.test(doc.text);
+    const uploaded = s.documents[i];
+    return `
+    <div class="checklist-item" style="flex-wrap:wrap;">
+      <span style="flex:1;min-width:220px;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
+      <span style="width:190px;flex-shrink:0;">${uploaded
+          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;" title="${uploaded.name}">Uploaded</span>`
+          : doc.optional
+            ? `<span class="muted" style="font-weight:600;font-size:12.5px;">Not uploaded (optional)</span>`
+            : `<span style="color:#b91c1c;font-weight:600;font-size:12.5px;">Not uploaded (required)</span>`}</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        ${isDeclaration ? (infoForm.url
+          ? `<a class="btn btn-plain btn-icon" href="${infoForm.url}" download="${infoForm.name}" title="Download Declaration Form">${ICONS.download}</a>`
+          : `<button class="btn btn-plain btn-icon" disabled title="Office hasn't uploaded the Declaration Form yet">${ICONS.download}</button>`
+        ) : ""}
+        <label class="btn btn-plain" style="margin:0;cursor:pointer;">
+          ${ICONS.upload} ${uploaded ? "Replace" : t("Upload")}
+          <input type="file" style="display:none;" onchange="uploadChecklistDoc(${i}, this)" />
+        </label>
+      </div>
+    </div>
+  `;
+  }).join("");
+  return `
+    <div class="banner">${t("Required Documents Checklist")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t("Upload each required document below — this is mandatory before your file can be accepted. You must also bring the physical documents and printouts to the International Office; documents uploaded here are for tracking purposes only and are not reviewed or approved on this portal.")}
+      </div>
+      ${officeGuide ? `<div class="note mb" style="white-space:pre-wrap;">${officeGuide}</div>` : ""}
+      ${items}
+    </div>
+  `;
+}
+ 
+function uploadChecklistDoc(i, inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (!s.documents) s.documents = {};
+  if (s.documents[i] && s.documents[i].url) URL.revokeObjectURL(s.documents[i].url);
+  s.documents[i] = { name: file.name, url: URL.createObjectURL(file) };
+  s.checklist[i] = true;
+  renderContent();
+}
+ 
+/* =====================================================================
+   MAIL TEMPLATES
+===================================================================== */
+function openMailModal(studentId, missingDoc, pickupCity) {
+  const s = getStudent(studentId);
+  if (!s) return;
+  mailContext = { studentId, missingDoc: missingDoc || "", pickupCity: pickupCity || "" };
+  document.getElementById("mailModalName").textContent = `${s.name} (${email(s.id)})`;
+  const select = document.getElementById("mailTemplateSelect");
+  select.innerHTML = mailTemplates.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+  document.getElementById("mailNote").value = "";
+  updateMailPreview();
+  document.getElementById("mailOverlay").classList.add("show");
+}
+ 
+function fillTemplate(str, s, note, missingDoc, pickupCity) {
+  return str
+    .replaceAll("{{name}}", s.name)
+    .replaceAll("{{studentId}}", s.id)
+    .replaceAll("{{note}}", note || "the reason noted by the office")
+    .replaceAll("{{missingDoc}}", missingDoc || "the missing document")
+    .replaceAll("{{missingDocsReason}}", note || "the reason noted by the office")
+    .replaceAll("{{pickupcity}}", pickupCity || "the campus noted by the office");
+}
+ 
+function updateMailPreview() {
+  if (!mailContext) return;
+  const s = getStudent(mailContext.studentId);
+  const tmplId = document.getElementById("mailTemplateSelect").value;
+  const tmpl = mailTemplates.find(t => t.id === tmplId) || mailTemplates[0];
+  const note = document.getElementById("mailNote").value.trim();
+  const subject = fillTemplate(tmpl.subject, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const body = fillTemplate(tmpl.body, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  document.getElementById("mailPreview").textContent = `Subject: ${subject}\n\n${body}`;
+}
+ 
+function sendMailNow() {
+  const s = getStudent(mailContext.studentId);
+  const tmplId = document.getElementById("mailTemplateSelect").value;
+  const tmpl = mailTemplates.find(t => t.id === tmplId) || mailTemplates[0];
+  const note = document.getElementById("mailNote").value.trim();
+  const subject = fillTemplate(tmpl.subject, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const body = fillTemplate(tmpl.body, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const href = `mailto:${email(s.id)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = href;
+  closeMailModal();
+}
+ 
+function closeMailModal() {
+  document.getElementById("mailOverlay").classList.remove("show");
+  mailContext = null;
+}
+ 
+/* =====================================================================
+   OFFICE: VIEW UPLOADED DOCUMENTS
+===================================================================== */
+function openDocsModal(studentId) {
+  const s = getStudent(studentId);
+  if (!s) return;
+  if (!s.documents) s.documents = {};
+  document.getElementById("docsModalName").textContent = `${s.name} (${s.id})`;
+ 
+  const rows = requiredDocs.map((doc, i) => {
+    const uploaded = s.documents[i];
+    return `
+    <div class="checklist-item" style="flex-wrap:wrap;">
+      <span style="flex:1;min-width:180px;white-space:normal;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
+      <span style="width:150px;flex-shrink:0;">${uploaded
+          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;">Uploaded</span>`
+          : `<span class="badge badge-gray" style="white-space:nowrap;">${doc.optional ? "Not uploaded (optional)" : "Not uploaded"}</span>`}</span>
+      <div style="display:flex;gap:14px;flex-shrink:0;align-items:center;">
+        ${uploaded
+          ? `<a href="${uploaded.url}" target="_blank" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("View")}</a>
+             <a href="${uploaded.url}" download="${uploaded.name}" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("Download")}</a>`
+          : ""}
+      </div>
+    </div>`;
+  }).join("");
+ 
+  document.getElementById("docsModalBody").innerHTML = rows;
+  document.getElementById("docsOverlay").classList.add("show");
+}
+ 
+function closeDocsModal() {
+  document.getElementById("docsOverlay").classList.remove("show");
+}
+ 
+/* =====================================================================
+   OFFICE: BATCHES
+===================================================================== */
+function nextThursday() {
+  const d = new Date();
+  const day = d.getDay(); 
+  const diff = (4 - day + 7) % 7 || 7;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+ 
+function nextThursdayLabel() {
+  return labelForDate(nextThursday());
+}
+ 
+function nextThursdayISO() {
+  return isoDate(nextThursday());
+}
+ 
+function isoDate(d) {
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+ 
+function labelForDate(d) {
+  return d.toLocaleDateString("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+}
+ 
+function labelForISODate(iso) {
+  if (!iso) return nextThursdayLabel();
+  const [y, m, d] = iso.split("-").map(Number);
+  return labelForDate(new Date(y, m - 1, d));
+}
+ 
+function locationOptions(selected) {
+  return ["Maslak Campus", "Şile Campus"].map(loc =>
+    `<option value="${loc}" ${selected === loc ? "selected" : ""}>${loc}</option>`
+  ).join("");
+}
+ 
+function officeBatchesView() {
+  return `
+    <div class="banner">${t("Thursday Delivery Batches")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t("Create a batch for a Thursday delivery to Göç İdaresi. Pull students in by Student ID, confirm once their physical file has been taken into the office, and record where the Tebliğ or kimlik should be delivered back to.")}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("Delivery date")}</label>
+        <input type="date" id="newBatchDate" value="${nextThursdayISO()}" style="width:160px;flex:none;" />
+        <button class="btn btn-solid" onclick="createBatch()">${ICONS.plus} ${t("Create Batch")}</button>
+      </div>
+    </div>
+
+    <div class="banner">${t("Search Batches")}</div>
+    <div class="panel">
+      <div class="table-toolbar" style="justify-content:flex-start;margin:0;flex-wrap:wrap;">
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("Search batches")}</label>
+        <div style="position:relative;display:inline-flex;align-items:center;">
+          <span style="position:absolute;left:9px;display:flex;color:var(--muted);pointer-events:none;">${ICONS.search}</span>
+          <input type="text" id="batchSearch" placeholder="e.g. Thursday, 04 September, or 2026-09-04" oninput="filterBatches()" style="width:280px;padding-left:29px;" />
+        </div>
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("Or pick a date")}</label>
+        <input type="date" id="batchSearchDate" onchange="filterBatches()" style="appearance:none;-webkit-appearance:none;padding:6px 9px;min-width:140px;" />
+        <button class="btn btn-plain" onclick="clearBatchSearch()" style="font-size:12px;">${t("Clear")}</button>
+      </div>
+    </div>
+    <div id="batchesList"></div>
+  `;
+}
+ 
+function filterBatches() {
+  const listEl = document.getElementById("batchesList");
+  if (!listEl) return;
+  const q = (document.getElementById("batchSearch")?.value || "").toLowerCase().trim();
+  const dateVal = document.getElementById("batchSearchDate")?.value || "";
+  const filtered = batches.filter(b => {
+    const matchesText = !q || b.label.toLowerCase().includes(q) || (b.date || "").toLowerCase().includes(q);
+    const matchesDate = !dateVal || b.date === dateVal;
+    return matchesText && matchesDate;
+  });
+  listEl.innerHTML = filtered.map(renderBatchCard).join("") || (
+    batches.length
+      ? `<div class="muted">No batches match that search.</div>`
+      : `<div class="muted">No batches yet. Create one above.</div>`
+  );
+}
+ 
+function clearBatchSearch() {
+  const t = document.getElementById("batchSearch");
+  const d = document.getElementById("batchSearchDate");
+  if (t) t.value = "";
+  if (d) d.value = "";
+  filterBatches();
+}
+ 
+function renderBatchCard(batch) {
+  return `
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="flex-between mb">
+        <div style="font-weight:700;font-size:14px;">
+          ${batch.label}
+          <span class="muted" style="font-weight:400;font-size:12px;"> (${batch.entries.length} student${batch.entries.length === 1 ? "" : "s"})</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-plain" onclick="exportBatchExcel('${batch.id}')">${ICONS.download} Teslim (Excel)</button>
+          <button class="btn btn-danger btn-icon" onclick="deleteBatch('${batch.id}')" title="Delete batch">${ICONS.trash}</button>
+        </div>
+      </div>
+ 
+      <div class="flex-between mb">
+        <input type="text" id="addId-${batch.id}" placeholder="Enter Student ID to pull into this batch" style="flex:1;" />
+        <button class="btn btn-plain" onclick="addStudentToBatch('${batch.id}')">${ICONS.plus} ${t("Add to Batch")}</button>
+      </div>
+      <div id="batchError-${batch.id}" style="color:#b91c1c;font-size:12px;margin-bottom:4px;"></div>
+ 
+      ${batch.entries.length ? batchTable(batch) : `<div class="muted" style="padding:8px 0;">No students added yet.</div>`}
+    </div>
+  `;
+}
+ 
+function statusSelectOptions(selected) {
+  const options = [
+    ["waiting", "Waiting (in office)"],
+    ["rejected", "Returned: missing documents"],
+    ["tebligated", "Teslim Tesellüm ready"],
+    ["delivered_goc", "Delivered to Göç İdaresi"],
+  ];
+  return options.map(([val, label]) =>
+    `<option value="${val}" ${selected === val ? "selected" : ""}>${label}</option>`
+  ).join("");
+}
+ 
+function batchTable(batch) {
+  const rows = batch.entries.map(e => `
+    <tr>
+      <td>${e.studentId}</td>
+      <td><span style="color:var(--navy);text-decoration:underline;cursor:pointer;" onclick="openDocsModal('${e.studentId}')" title="View uploaded documents">${e.name}</span></td>
+      <td>${e.ykn || '<span class="muted">—</span>'}</td>
+      <td>
+        <input type="date" value="${e.fileObtainedDate || ''}" onchange="updateBatchEntry('${batch.id}','${e.studentId}','fileObtainedDate', this.value)" style="width:150px;" />
+      </td>
+      <td>
+        <select onchange="updateBatchEntry('${batch.id}','${e.studentId}','tebligLocation', this.value)">
+          ${locationOptions(e.tebligLocation)}
+        </select>
+      </td>
+      <td>
+        <select onchange="updateBatchEntry('${batch.id}','${e.studentId}','status', this.value)">
+          ${statusSelectOptions(e.status)}
+        </select>
+      </td>
+      <td style="min-width:170px;">
+        ${e.status === 'rejected' ? `
+        <select style="max-width:220px;" onchange="updateBatchEntry('${batch.id}','${e.studentId}','missingDoc', this.value)">
+          <option value="">Select missing document...</option>
+          ${requiredDocs.map(doc => `<option value="${doc.text.replace(/"/g, "&quot;")}" ${e.missingDoc === doc.text ? "selected" : ""}>${doc.text}</option>`).join("")}
+        </select>` : `<span class="muted">Not applicable</span>`}
+      </td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-plain btn-icon" onclick="openDocsModal('${e.studentId}')" title="View uploaded documents">${ICONS.eye}</button>
+        <button class="btn btn-plain btn-icon" onclick="openMailModal('${e.studentId}', '${(e.missingDoc||"").replace(/'/g, "\\'")}', '${e.tebligLocation.replace(/'/g, "\\'")}')" title="Send template mail">${ICONS.mail}</button>
+        <button class="btn btn-plain btn-icon" onclick="removeBatchEntry('${batch.id}','${e.studentId}')" title="Remove from batch">${ICONS.trash}</button>
+      </td>
+    </tr>
+  `).join("");
+ 
+  return `
+    <div style="overflow-x:auto;">
+    <table style="min-width:1050px;">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name Surname</th>
+          <th>YKN</th>
+          <th>${t("File Obtained Date")}</th>
+          <th>Tebliğ Delivery Location</th>
+          <th>Status</th>
+          <th>Missing Document</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+  `;
+}
+ 
+function createBatch() {
+  const input = document.getElementById("newBatchDate");
+  const iso = input.value || nextThursdayISO();
+  batches.unshift({ id: "batch-" + Date.now(), label: labelForISODate(iso), date: iso, entries: [] });
+  renderContent();
+}
+ 
+function deleteBatch(id) {
+  if (!confirm("Delete this batch? This cannot be undone.")) return;
+  batches = batches.filter(b => b.id !== id);
+  renderContent();
+}
+ 
+function exportBatchExcel(batchId) {
+  const batch = batches.find(b => b.id === batchId);
+  if (!batch) return;
+  const dateLabel = batch.label;
+ 
+  const rows = batch.entries.map(e => {
+    const { first, last } = splitName(e.name);
+    return `
+    <tr>
+      <td>${e.studentId}</td>
+      <td>${first}</td>
+      <td>${last}</td>
+      <td>${email(e.studentId)}</td>
+      <td>${e.ykn || ""}</td>
+      <td style="border:1px solid #000;height:34px;width:140px;"></td>
+      <td style="border:1px solid #000;height:34px;width:110px;"></td>
+    </tr>
+  `;
+  }).join("");
+ 
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8"></head>
+    <body>
+      <table border="1" cellspacing="0" cellpadding="4">
+        <tr><td colspan="7" style="font-size:16px;font-weight:bold;text-align:center;">Teslim Listesi</td></tr>
+        <tr><td colspan="7" style="text-align:center;">${dateLabel}</td></tr>
+        <tr><td colspan="7"></td></tr>
+        <tr style="font-weight:bold;background:#eee;">
+          <td>Öğrenci No</td>
+          <td>Adı</td>
+          <td>Soyadı</td>
+          <td>E-posta</td>
+          <td>YKN</td>
+          <td>İmza</td>
+          <td>Tarih</td>
+        </tr>
+        ${rows}
+      </table>
+    </body>
+    </html>
+  `;
+ 
+  const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Teslim_${batch.date || todayStr()}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+ 
+function addStudentToBatch(batchId) {
+  const input = document.getElementById("addId-" + batchId);
+  const errorEl = document.getElementById("batchError-" + batchId);
+  const id = input.value.trim();
+  errorEl.textContent = "";
+  if (!id) return;
+ 
+  const student = getStudent(id);
+  if (!student) {
+    errorEl.textContent = `No student found with ID "${id}".`;
+    return;
+  }
+  const batch = batches.find(b => b.id === batchId);
+  if (batch.entries.some(e => e.studentId === id)) {
+    errorEl.textContent = "This student is already in the batch.";
+    return;
+  }
+  const batchStatuses = ["waiting", "rejected", "tebligated", "delivered_goc"];
+  batch.entries.push({
+    studentId: student.id,
+    name: student.name,
+    ykn: student.ykn,
+    fileObtainedDate: todayISO(),
+    tebligLocation: "Maslak Campus",
+    status: batchStatuses.includes(student.status) ? student.status : "waiting",
+  });
+  student.delivered = true;
+  if (!student.receivedDate) student.receivedDate = todayStr();
+  input.value = "";
+  renderContent();
+}
+ 
+function removeBatchEntry(batchId, studentId) {
+  const batch = batches.find(b => b.id === batchId);
+  batch.entries = batch.entries.filter(e => e.studentId !== studentId);
+  renderContent();
+}
+ 
+function updateBatchEntry(batchId, studentId, field, value) {
+  const batch = batches.find(b => b.id === batchId);
+  const entry = batch.entries.find(e => e.studentId === studentId);
+  entry[field] = value;
+ 
+  if (field === "status" || field === "missingDoc") {
+    const s = getStudent(studentId);
+    if (s) {
+      s.status = entry.status;
+      s.note = entry.status === "rejected" ? entry.missingDoc || "" : "";
+      if (entry.status === "delivered_goc" && !s.submittedDate) s.submittedDate = todayStr();
+    }
+  }
+  renderContent();
+}
+ 
+/* =====================================================================
+   OFFICE: REQUIRED DOCUMENTS MANAGER
+===================================================================== */
+function officeDocsView() {
+  const items = requiredDocs.map((doc, i) => {
+    const isDeclaration = /declaration form/i.test(doc.text);
+    return `
+    <div class="checklist-item" style="justify-content:space-between;">
+      <span>${doc.text}</span>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);${isDeclaration ? "" : "cursor:pointer;"}">
+          <input type="checkbox" ${doc.optional ? "checked" : ""} ${isDeclaration ? "disabled" : ""} onchange="toggleDocOptional(${i}, this.checked)" />
+          ${t("Optional")}
+        </label>
+        ${isDeclaration
+          ? `<span class="muted" style="font-size:12px;">Fixed &mdash; edit the file via <a href="#" onclick="goTo('form');return false;">Declaration Form Upload</a></span>`
+          : `<button class="btn btn-danger btn-icon" onclick="removeDoc(${i})">${ICONS.trash}</button>`}
+      </div>
+    </div>
+  `;
+  }).join("");
+ 
+  const templates = mailTemplates.map((tItem, i) => `
+    <div class="panel" style="margin-bottom:14px;padding:16px;">
+      <div class="field">
+        <label>${t("Template Name")}</label>
+        <input type="text" value="${tItem.name.replace(/"/g, "&quot;")}" onchange="updateTemplate(${i}, 'name', this.value)" />
+      </div>
+      <div class="field">
+        <label>${t("Subject")}</label>
+        <input type="text" value="${tItem.subject.replace(/"/g, "&quot;")}" onchange="updateTemplate(${i}, 'subject', this.value)" />
+      </div>
+      <div class="field">
+        <label>${t("Body placeholders:")} {{name}}, {{studentId}}, {{note}}, {{missingDoc}}, {{missingDocsReason}}, {{pickupcity}}</label>
+        <textarea rows="6" style="width:100%;font-family:inherit;font-size:13px;padding:8px;border:1px solid #cbd5e1;border-radius:4px;" onchange="updateTemplate(${i}, 'body', this.value)">${tItem.body}</textarea>
+      </div>
+      <div style="text-align:right;">
+        <button class="btn btn-danger btn-icon" onclick="removeTemplate(${i})" title="Delete template">${ICONS.trash}</button>
+      </div>
+    </div>
+  `).join("");
+ 
+  return `
+    <div class="banner">${t("Required Documents Manager")}</div>
+    <div class="panel">
+      <div class="note mb">${t("Documents listed here appear automatically on every student's checklist. Tick Optional for a document students don't strictly have to upload; it still shows on their checklist, just without the required warning.")}</div>
+      ${items}
+      <div class="flex-between" style="margin-top:16px;">
+        <input type="text" id="newDocInput" placeholder="${t("Add a new required document...")}" style="flex:1;" />
+        <button class="btn btn-solid" onclick="addDoc()">${ICONS.plus} ${t("Upload")}</button>
+      </div>
+    </div>
+ 
+    <div class="banner">${t("Student Guide")}</div>
+    <div class="panel">
+      <div class="note mb">${t("This guide is shown to students on their Required Documents Checklist page. Use it for reminders or extra instructions.")}</div>
+      <textarea id="guideInput" rows="4" style="width:100%;font-family:inherit;font-size:13px;padding:8px;border:1px solid #cbd5e1;border-radius:4px;">${officeGuide}</textarea>
+      <div style="text-align:right;margin-top:10px;">
+        <button class="btn btn-solid" onclick="saveGuide()">${t("Save Guide")}</button>
+      </div>
+    </div>
+ 
+    <div class="banner">${t("Mail Templates")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t("Templates staff can send to students, for example when files are returned from Göç İdaresi due to a missing document, or when a student needs to come sign for their Teslim Tesellüm. Send a template from any student's row in the Batches page.")}
+      </div>
+      ${templates}
+      <button class="btn btn-solid" onclick="addTemplate()">${ICONS.plus} ${t("Add Template")}</button>
+    </div>
+  `;
+}
+ 
+function addDoc() {
+  const input = document.getElementById("newDocInput");
+  if (!input.value.trim()) return;
+  requiredDocs.push({ text: input.value.trim(), optional: false });
+  renderContent();
+}
+ 
+function removeDoc(i) {
+  if (/declaration form/i.test(requiredDocs[i]?.text || "")) return;
+  requiredDocs.splice(i, 1);
+  renderContent();
+}
+
+function toggleDocOptional(i, val) {
+  if (!requiredDocs[i]) return;
+  if (/declaration form/i.test(requiredDocs[i].text)) return;
+  requiredDocs[i].optional = val;
+  renderContent();
+}
+ 
+function saveGuide() {
+  officeGuide = document.getElementById("guideInput").value;
+  renderContent();
+}
+ 
+function updateTemplate(i, field, value) {
+  mailTemplates[i][field] = value;
+}
+ 
+function addTemplate() {
+  mailTemplates.push({ id: "tmpl-" + Date.now(), name: "New Template", subject: "Subject line", body: "Dear {{name}},\n\n" });
+  renderContent();
+}
+ 
+function removeTemplate(i) {
+  if (!confirm("Delete this template?")) return;
+  mailTemplates.splice(i, 1);
+  renderContent();
+}
+ 
+/* =====================================================================
+   OFFICE: Declaration Form UPLOAD
+===================================================================== */
+function officeInfoFormView() {
+  return `
+    <div class="banner">${t("Declaration Form Upload")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t("Upload the Declaration Form (PDF). Students will be able to download it, fill it in by hand, and sign it at the counter. This file is also what students download from the \"Declaration Form\" item on their Required Documents Checklist — upload a new file here any time to replace it.")}
+      </div>
+      <div class="flex-between">
+        <input type="file" id="formFileInput" accept="application/pdf" />
+        <button class="btn btn-solid" onclick="uploadForm()">${ICONS.upload} ${t("Upload")}</button>
+      </div>
+      <div style="margin-top:14px;">
+        ${infoForm.name
+          ? `Current file: <strong>${infoForm.name}</strong>`
+          : `<span class="muted">No form uploaded yet.</span>`}
+      </div>
+    </div>
+  `;
+}
+ 
+function uploadForm() {
+  const input = document.getElementById("formFileInput");
+  const file = input.files[0];
+  if (!file) return;
+  if (infoForm.url) URL.revokeObjectURL(infoForm.url);
+  infoForm.name = file.name;
+  infoForm.url = URL.createObjectURL(file);
+  renderContent();
+}
+</script>
+</body>
+<footer style="text-align: center; padding: 20px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px;">
+  Made by: <a href="https://github.com/Nettlex" target="_blank" style="color: var(--navy); text-decoration: none; font-weight: 600;">Yusuf K.U.</a>
+</footer>
+</html>
