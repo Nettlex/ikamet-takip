@@ -244,11 +244,11 @@ let requiredDocs = [
 ];
 
 let students = [
-  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {} },
-  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", submitted: true, status: "pending_review", note: "", submittedDate: "2026-08-26", checklist: {}, documents: {} },
-  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", submitted: true, status: "rejected", note: "Passport scan unreadable", submittedDate: "2026-08-20", checklist: {}, documents: {} },
-  { id: "20220034", name: "Layla Haddad", validity: "-", ykn: "", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {} },
-  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", submitted: true, status: "approved", note: "", submittedDate: "2026-08-18", checklist: {}, documents: {} },
+  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {}, teslimTesellum: null },
+  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", submitted: true, status: "pending_review", note: "", submittedDate: "2026-08-26", checklist: {}, documents: {}, teslimTesellum: null },
+  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", submitted: true, status: "rejected", note: "Passport scan unreadable", submittedDate: "2026-08-20", checklist: {}, documents: {}, teslimTesellum: null },
+  { id: "20220034", name: "Layla Haddad", validity: "-", ykn: "", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {}, teslimTesellum: null },
+  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", submitted: true, status: "approved", note: "", submittedDate: "2026-08-18", checklist: {}, documents: {}, teslimTesellum: null },
 ];
 
 let submissionsTab = "not_approved";
@@ -353,6 +353,16 @@ const TR = {
   "Your file has been approved by the International Office.": "Dosyanız Uluslararası Ofis tarafından onaylandı.",
   "Documents the student has uploaded for review. These uploaded files are the official submission.": "Öğrencinin incelenmek üzere yüklediği belgeler. Bu yüklenen dosyalar resmi başvurudur.",
   "Download All (Merged PDF)": "Tümünü İndir (Birleştirilmiş PDF)",
+  "Sent to Göç İdaresi": "Göç İdaresine Teslim Edildi",
+  "Your file has been sent to Göç İdaresi.": "Dosyanız Göç İdaresine teslim edildi.",
+  "Your file has been sent to Göç İdaresi. No further action is needed.": "Dosyanız Göç İdaresine teslim edildi. Başka bir işlem yapmanıza gerek yok.",
+  "Teslim Tesellüm": "Teslim Tesellüm",
+  "Upload Teslim Tesellüm": "Teslim Tesellüm Yükle",
+  "Download Teslim Tesellüm": "Teslim Tesellüm İndir",
+  "Replace Teslim Tesellüm": "Teslim Tesellümü Değiştir",
+  "Uploaded": "Yüklendi",
+  "Not uploaded": "Yüklenmedi",
+  "Your Teslim Tesellüm document is ready to download.": "Teslim Tesellüm belgeniz indirilmeye hazır.",
   "Merging…": "Birleştiriliyor…",
   "This student hasn't uploaded any documents yet.": "Bu öğrenci henüz herhangi bir belge yüklemedi.",
   "None of this student's uploaded files could be read as PDFs.": "Bu öğrencinin yüklediği dosyaların hiçbiri PDF olarak okunamadı.",
@@ -537,7 +547,7 @@ function statusBadge(s) {
     return `<span class="badge badge-red">${t("Returned: missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
   }
   if (s.status === "approved") {
-    return `<span class="badge badge-green">${t("Approved")}</span>`;
+    return `<span class="badge badge-green">${t("Sent to Göç İdaresi")}</span>`;
   }
   const sub = s.submittedDate ? `Submitted ${displayDate(s.submittedDate)}` : "";
   return `<span class="badge badge-amber">${t("Under review")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
@@ -568,8 +578,14 @@ function studentStatusView() {
         ${t("Please check the required documents checklist, correct the issue, and send your file again.")}
       </div>` : s.status === "approved" ? `
       <div style="margin-top:20px;" class="note">
-        ${t("Your file has been approved by the International Office.")}
-      </div>` : `
+        ${t("Your file has been sent to Göç İdaresi.")}
+      </div>
+      ${s.teslimTesellum ? `
+      <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;" class="note">
+        <span>${t("Your Teslim Tesellüm document is ready to download.")}</span>
+        <a class="btn btn-solid" href="${s.teslimTesellum.url}" download="${s.teslimTesellum.name}">${ICONS.download} ${t("Download Teslim Tesellüm")}</a>
+      </div>` : ""}
+      ` : `
       <div style="margin-top:20px;" class="note">
         ${t("Your file has been sent to the International Office and is under review.")}
       </div>`}
@@ -606,7 +622,7 @@ function studentChecklistView() {
   const ready = allRequiredUploaded(s);
   const sendLabel = s.submitted ? t("Resend to International Office") : t("Send to International Office for Review");
   const footer = s.status === "approved"
-    ? `<div class="note mb" style="margin-top:16px;">${t("Your file has been approved. No further action is needed.")}</div>`
+    ? `<div class="note mb" style="margin-top:16px;">${t("Your file has been sent to Göç İdaresi. No further action is needed.")}</div>`
     : `
       <div style="margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
         ${!ready ? `<span class="muted" style="font-size:12px;">${t("Upload all required documents to enable sending.")}</span>` : ""}
@@ -832,7 +848,7 @@ async function mergeAndDownloadDocs() {
 function reviewStatusOptions(selected) {
   const options = [
     ["pending_review", "Pending Review"],
-    ["approved", "Approved"],
+    ["approved", "Sent to Göç İdaresi"],
     ["rejected", "Rejected: missing documents"],
   ];
   return options.map(([val, label]) =>
@@ -864,7 +880,7 @@ function officeSubmissionsView() {
     <div class="flex-between mb">
       <div style="display:flex;gap:8px;">
         <button class="btn ${submissionsTab === "not_approved" ? "btn-solid" : "btn-plain"}" onclick="setSubmissionsTab('not_approved')">${t("Not Approved")}</button>
-        <button class="btn ${submissionsTab === "approved" ? "btn-solid" : "btn-plain"}" onclick="setSubmissionsTab('approved')">${t("Approved")}</button>
+        <button class="btn ${submissionsTab === "approved" ? "btn-solid" : "btn-plain"}" onclick="setSubmissionsTab('approved')">${t("Sent to Göç İdaresi")}</button>
       </div>
       <button class="btn btn-plain" onclick="exportSubmissionsExcel()">${ICONS.download} ${t("Export List (Excel)")}</button>
     </div>
@@ -912,6 +928,7 @@ function clearSubmissionSearch() {
 }
 
 function submissionsTable(list) {
+  const showTeslim = submissionsTab === "approved";
   const rows = list.map(s => `
     <tr>
       <td>${s.id}</td>
@@ -930,6 +947,17 @@ function submissionsTable(list) {
           ${requiredDocs.map(doc => `<option value="${doc.text.replace(/"/g, "&quot;")}" ${s.note === doc.text ? "selected" : ""}>${doc.text}</option>`).join("")}
         </select>` : `<span class="muted">Not applicable</span>`}
       </td>
+      ${showTeslim ? `
+      <td style="min-width:190px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span class="badge ${s.teslimTesellum ? "badge-green" : "badge-red"}">${s.teslimTesellum ? t("Uploaded") : t("Not uploaded")}</span>
+          <label class="btn btn-plain btn-icon" style="margin:0;cursor:pointer;" title="${s.teslimTesellum ? t("Replace Teslim Tesellüm") : t("Upload Teslim Tesellüm")}">
+            ${ICONS.upload}
+            <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadTeslimTesellum('${s.id}', this)" />
+          </label>
+          ${s.teslimTesellum ? `<a href="${s.teslimTesellum.url}" target="_blank" title="${t("View")}" style="display:inline-flex;color:var(--navy);">${ICONS.eye}</a>` : ""}
+        </div>
+      </td>` : ""}
       <td style="white-space:nowrap;">
         <button class="btn btn-plain btn-icon" onclick="openDocsModal('${s.id}')" title="View uploaded documents">${ICONS.eye}</button>
         <button class="btn btn-plain btn-icon" onclick="openMailModal('${s.id}', '${(s.note || "").replace(/'/g, "\\'")}', '')" title="Send template mail">${ICONS.mail}</button>
@@ -940,7 +968,7 @@ function submissionsTable(list) {
   return `
     <div class="panel" style="padding:0;">
     <div style="overflow-x:auto;">
-    <table style="min-width:950px;">
+    <table style="min-width:${showTeslim ? 1100 : 950}px;">
       <thead>
         <tr>
           <th>${t("Student ID")}</th>
@@ -949,6 +977,7 @@ function submissionsTable(list) {
           <th>${t("Submitted Date")}</th>
           <th>${t("Status")}</th>
           <th>${t("Missing Document")}</th>
+          ${showTeslim ? `<th>${t("Teslim Tesellüm")}</th>` : ""}
           <th></th>
         </tr>
       </thead>
@@ -957,6 +986,22 @@ function submissionsTable(list) {
     </div>
     </div>
   `;
+}
+
+function uploadTeslimTesellum(studentId, inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  if (!isPdf) {
+    alert(t("Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again."));
+    inputEl.value = "";
+    return;
+  }
+  const s = getStudent(studentId);
+  if (!s) return;
+  if (s.teslimTesellum && s.teslimTesellum.url) URL.revokeObjectURL(s.teslimTesellum.url);
+  s.teslimTesellum = { name: file.name, url: URL.createObjectURL(file), file: file };
+  renderContent();
 }
 
 function updateStudentField(id, field, value) {
@@ -982,7 +1027,7 @@ function exportSubmissionsExcel() {
   }
   const rows = list.map(s => {
     const { first, last } = splitName(s.name);
-    const statusLabel = s.status === "approved" ? "Onaylandı" : (s.status === "rejected" ? "Reddedildi" : "İnceleniyor");
+    const statusLabel = s.status === "approved" ? "Göç İdaresine Teslim Edildi" : (s.status === "rejected" ? "Reddedildi" : "İnceleniyor");
     return `
     <tr>
       <td>${s.id}</td>
