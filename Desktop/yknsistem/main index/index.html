@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Işık University: Residence Permit Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+  :root{
+    --navy:#1E3A8A;
+    --navy-dark:#0F2942;
+    --border:#E2E8F0;
+    --card:#F8FAFC;
+    --text:#1e293b;
+    --muted:#64748b;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:13px;color:var(--text);background:#fff;overflow-x:hidden;}
+  a{color:#1d4ed8;}
+ 
+  /* ---------- Topbar ---------- */
+  .topbar{display:flex;justify-content:space-between;align-items:center;padding:10px 24px;border-bottom:1px solid var(--border);background:#fff;}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .logo-mark{width:34px;height:34px;border-radius:6px;background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;}
+  .brand-text strong{display:block;font-size:14px;color:var(--text);line-height:1.2;}
+  .brand-text span{font-size:11px;color:var(--muted);}
+  .topbar-right{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+  .status-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8;display:inline-block;margin-right:5px;}
+  .icon-btn{color:var(--muted);display:inline-flex;}
+  .avatar{width:28px;height:28px;border-radius:50%;background:#cbd5e1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#475569;}
+  .user-name{font-weight:700;color:var(--text);font-size:12px;letter-spacing:.2px;}
+  .logout-link{color:var(--navy);cursor:pointer;text-decoration:underline;font-size:12px;white-space:nowrap;}
+  .lang-switch{display:inline-flex;border:1px solid #cbd5e1;border-radius:14px;overflow:hidden;}
+  .lang-switch button{border:none;background:#fff;color:var(--muted);padding:4px 11px;font-size:11px;font-weight:700;cursor:pointer;}
+  .lang-switch button.active{background:var(--navy);color:#fff;}
+ 
+  /* ---------- Menu bar ---------- */
+  .menubar{background:var(--navy);color:#fff;display:flex;gap:26px;padding:11px 24px;font-size:13px;}
+  .menubar span{opacity:.9;}
+ 
+  /* ---------- Layout ---------- */
+  .layout{display:flex;align-items:flex-start;min-height:calc(100vh - 108px);}
+  .sidebar{width:220px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);padding-bottom:20px;}
+  .sidebar-heading{background:#eef2f7;color:var(--navy);font-weight:700;font-size:13px;padding:9px 16px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 4px;}
+  .sidebar-link{display:block;padding:8px 16px;color:#1d4ed8;font-size:13px;cursor:pointer;}
+  .sidebar-link:hover{background:#eef2f7;text-decoration:underline;}
+  .sidebar-link.active{font-weight:700;background:#e8edf7;}
+ 
+  .content{flex:1;min-width:0;padding:24px 28px;overflow-x:hidden;}
+  .banner{background:var(--navy);color:#fff;font-size:14px;font-weight:600;padding:11px 16px;border-radius:3px 3px 0 0;}
+  .panel{border:1px solid var(--border);border-top:none;padding:22px;border-radius:0 0 4px 4px;margin-bottom:24px;background:#fff;}
+ 
+  /* ---------- Buttons ---------- */
+  .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--navy);background:#fff;color:var(--navy);padding:7px 13px;border-radius:4px;font-size:13px;cursor:pointer;}
+  .btn:hover{background:#f0f4fb;}
+  .btn-solid{background:var(--navy);color:#fff;}
+  .btn-solid:hover{background:#16306e;}
+  .btn-plain{border:1px solid #cbd5e1;color:var(--text);}
+  .btn-plain:hover{background:#f8fafc;}
+  .btn-icon{padding:6px 8px;}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .btn-danger{border-color:#fca5a5;color:#b91c1c;}
+  .btn-danger:hover{background:#fef2f2;}
+ 
+  /* ---------- Table ---------- */
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead th{background:var(--card);text-align:left;padding:9px 10px;border-bottom:1px solid var(--border);color:#334155;font-weight:700;white-space:nowrap;}
+  tbody td{padding:9px 10px;border-bottom:1px solid #f1f5f9;color:#334155;vertical-align:middle;}
+  tbody tr:hover{background:#fafbfd;}
+  .table-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;color:var(--muted);}
+  .table-toolbar input{padding:6px 9px;border:1px solid #cbd5e1;border-radius:4px;font-size:13px;width:220px;}
+ 
+  /* ---------- Badges ---------- */
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;border:1px solid transparent;white-space:nowrap;}
+  .badge-green{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
+  .badge-amber{background:#fffbeb;color:#b45309;border-color:#fde68a;}
+  .badge-red{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
+  .badge-gray{background:#f1f5f9;color:#475569;border-color:#e2e8f0;}
+ 
+  select, input[type=text], input[type=date]{font-size:13px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:4px;color:var(--text);background:#fff;}
+ 
+  /* ---------- Detail grid ---------- */
+  .detail-grid{display:grid;grid-template-columns:190px 1fr;row-gap:14px;column-gap:10px;font-size:13px;align-items:center;}
+  .detail-grid .label{color:var(--muted);}
+  .detail-grid .value{color:var(--text);font-weight:600;}
+  .note{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--navy);padding:11px 14px;border-radius:4px;font-size:12.5px;color:#334155;line-height:1.5;}
+ 
+  /* ---------- Checklist ---------- */
+  .checklist-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid #f1f5f9;}
+  .checklist-item:last-child{border-bottom:none;}
+  .checklist-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--navy);}
+ 
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .overlay.show{display:flex;}
+  .modal{background:#fff;border-radius:6px;width:100%;max-width:460px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18);}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--border);}
+  .modal-head strong{font-size:14px;}
+  .modal-body{padding:18px;}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;padding:14px 18px;border-top:1px solid var(--border);}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+  .field select, .field input{width:100%;}
+  .x-btn{cursor:pointer;color:var(--muted);background:none;border:none;padding:2px;}
+ 
+  /* ---------- Login ---------- */
+  .login-wrap{min-height:100vh;background:var(--card);display:flex;align-items:center;justify-content:center;padding:20px;}
+  .login-card{background:#fff;border:1px solid var(--border);border-radius:6px;padding:36px 32px;width:100%;max-width:380px;text-align:center;}
+  .login-card h1{font-size:16px;margin:14px 0 4px;color:var(--text);}
+  .login-card p{color:var(--muted);font-size:12.5px;margin:0 0 22px;}
+  .login-choice{border:1px solid var(--border);border-radius:5px;padding:14px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .15s;}
+  .login-choice:hover{border-color:var(--navy);}
+  .login-choice strong{display:block;font-size:13px;color:var(--text);}
+  .login-choice span{font-size:11.5px;color:var(--muted);}
+ 
+  .hidden{display:none !important;}
+  .flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .mb{margin-bottom:14px;}
+  .muted{color:var(--muted);}
+</style>
+</head>
+<body>
+ 
+<!-- ============ LOGIN ============ -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="logo-mark" style="margin:0 auto;">IU</div>
+    <h1>Işık University</h1>
+    <p>Residence Permit Portal. Choose a demo account below.</p>
+ 
+    <div class="login-choice" onclick="login('student')">
+      <strong>Student: Ahmet Yılmaz</strong>
+      <span>Student ID: 20223045</span>
+    </div>
+    <div class="login-choice" onclick="login('office')">
+      <strong>International Office Staff</strong>
+      <span>staff@isik.edu.tr</span>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============ APP SHELL ============ -->
+<div id="appShell" class="hidden">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">IU</div>
+      <div class="brand-text">
+        <strong>Işık Üniversitesi</strong>
+        <span>Residence Permit Portal</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="lang-switch">
+        <button id="langBtnEN" class="active" onclick="setLang('en')">EN</button>
+        <button id="langBtnTR" onclick="setLang('tr')">TR</button>
+      </div>
+      <span><span class="status-dot"></span><span id="lblOnline">Online</span></span>
+      <span id="userLabel" class="user-name"></span>
+      <div class="avatar" id="userAvatar"></div>
+      <span class="logout-link" onclick="logout()" id="lblLogout">Log out</span>
+    </div>
+  </div>
+  <div class="menubar">
+    <span id="lblMenuProcess">Residence Permit Process</span>
+    <span id="lblMenuContact">Contact International Office</span>
+  </div>
+ 
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+ 
+<!-- ============ MODAL: Send Template Mail ============ -->
+<div class="overlay" id="mailOverlay">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-head">
+      <strong id="lblSendMailHead">Send Mail</strong>
+      <button class="x-btn" onclick="closeMailModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mb muted" id="mailModalName" style="font-size:13px;font-weight:700;color:#1e293b;"></div>
+      <div class="field">
+        <label id="lblTemplateLabel">Template</label>
+        <select id="mailTemplateSelect" onchange="updateMailPreview()"></select>
+      </div>
+      <div class="field">
+        <label id="lblNoteInsertLabel">Note to insert (reason, missing item, etc.)</label>
+        <input type="text" id="mailNote" oninput="updateMailPreview()" placeholder="e.g. biometric photo" />
+      </div>
+      <div class="field">
+        <label id="lblPreviewLabel">Preview</label>
+        <div class="note" id="mailPreview" style="white-space:pre-wrap;max-height:220px;overflow:auto;"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-plain" onclick="closeMailModal()" id="lblCancelBtn">Cancel</button>
+      <button class="btn btn-solid" onclick="sendMailNow()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg> <span id="lblOpenClientBtn">Open in Mail Client</span></button>
+    </div>
+  </div>
+</div>
+ 
+<!-- ============ MODAL: Office views a student's uploaded documents ============ -->
+<div class="overlay" id="docsOverlay">
+  <div class="modal" style="max-width:520px;max-height:88vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <strong id="lblUploadedDocsHead">Uploaded Documents</strong>
+      <button class="x-btn" onclick="closeDocsModal()">✕</button>
+    </div>
+    <div class="modal-body" style="overflow-y:auto;flex:1;">
+      <div class="mb muted" id="docsModalName" style="font-size:13px;font-weight:700;color:#1e293b;"></div>
+      <div class="note mb" id="lblDocsReferenceText">Documents the student has uploaded for review. These uploaded files are the official submission.</div>
+      <div id="docsModalBody"></div>
+    </div>
+    <div class="modal-foot" style="flex-shrink:0;justify-content:space-between;">
+      <button class="btn btn-solid" id="mergeDocsBtn" onclick="mergeAndDownloadDocs()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> <span id="lblMergeDocsBtn">Download All (Merged PDF)</span></button>
+      <button class="btn btn-plain" onclick="closeDocsModal()" id="lblCloseBtn">Close</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+/* =====================================================================
+   ICONS (inline SVG, minimal line style)
+===================================================================== */
+const ICONS = {
+  eye: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+  mail: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>`,
+  download: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>`,
+  upload: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"/><path d="m7 14 5-5 5 5"/><path d="M5 3h14"/></svg>`,
+  trash: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>`,
+  plus: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>`,
+  search: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>`,
+};
+ 
+/* =====================================================================
+   STATE (in-memory only, resets on page reload)
+===================================================================== */
+let requiredDocs = [
+  { text: "Passport Scan", optional: false },
+  { text: "Address Document", optional: false },
+  { text: "Tax Payment Receipt", optional: false },
+  { text: "Application Form (from e-ikamet)", optional: false },
+];
+
+let students = [
+  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {} },
+  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", submitted: true, status: "pending_review", note: "", submittedDate: "2026-08-26", checklist: {}, documents: {} },
+  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", submitted: true, status: "rejected", note: "Passport scan unreadable", submittedDate: "2026-08-20", checklist: {}, documents: {} },
+  { id: "20220034", name: "Layla Haddad", validity: "-", ykn: "", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {} },
+  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", submitted: true, status: "approved", note: "", submittedDate: "2026-08-18", checklist: {}, documents: {} },
+];
+
+let submissionsTab = "not_approved";
+
+let mailTemplates = [
+  {
+    id: "tmpl-returned",
+    name: "Missing / incorrect document",
+    subject: "Residence Permit Documents: Action Required",
+    body: "Dear {{name}},\n\nWe reviewed your residence permit file and found an issue with the following document: {{missingDoc}}.\n\nReason: {{missingDocsReason}}\n\nCould you please log in to the portal, upload the corrected document, and click \"Send to International Office for Review\" again?\n\nThank you,\nInternational Office"
+  },
+];
+
+let officeGuide = `Residence Permit Process: Step by Step
+
+1. Online Application: Apply online at https://e-ikamet.goc.gov.tr. If your current permit has not expired yet, you can apply up to 59 days before it expires.
+
+2. Pay the Tax Fee: Pay the residence permit card tax (964 TL for 2026) online or at any Tax Office, then keep the receipt.
+
+3. Gather Your Documents: Prepare digital scans of your passport, your address document, your tax payment receipt, and your application form from e-ikamet.
+
+4. Upload Your Documents: Upload each required document below on this portal.
+
+5. Send for Review: Once all required documents are uploaded, click "Send to International Office for Review." Everything is handled online, and no physical delivery is required.
+
+6. Wait for Review: The International Office will review your file and update your status here. If a document needs correction, you'll see the reason below; simply re-upload it and send your file again.`;
+ 
+const CURRENT_STUDENT_ID = "20223045";
+let role = null; 
+let activeSection = null;
+
+let currentLang = "en";
+
+const TR = {
+  "Online": "Çevrimiçi",
+  "Log out": "Çıkış Yap",
+  "Residence Permit Process": "İkamet Belgesi Süreci",
+  "Contact International Office": "Uluslararası Ofisle İletişime Geç",
+  "Student": "Öğrenci",
+  "Office": "Ofis",
+  "My Status": "Durumum",
+  "Submissions": "Başvurular",
+  "Students upload their documents online and click \"Send to International Office for Review\" once their file is complete. Review each submission below, approve it or send it back for corrections, and download all files together.": "Öğrenciler belgelerini çevrimiçi olarak yükler ve dosyaları tamamlandığında \"Uluslararası Ofise İncelemeye Gönder\" butonuna tıklar. Aşağıdan her başvuruyu inceleyin, onaylayın veya düzeltme için geri gönderin ve tüm dosyaları birlikte indirin.",
+  "Search": "Ara",
+  "Search by name or Student ID": "İsim veya Öğrenci Numarası ile ara",
+  "From": "Başlangıç",
+  "To": "Bitiş",
+  "Clear": "Temizle",
+  "Not Approved": "Onaylanmadı",
+  "Approved": "Onaylandı",
+  "No submissions match this search.": "Bu aramayla eşleşen başvuru yok.",
+  "No submissions yet.": "Henüz başvuru yok.",
+  "Submitted Date": "Gönderim Tarihi",
+  "Status": "Durum",
+  "Missing Document": "Eksik Belge",
+  "Export List (Excel)": "Listeyi Dışa Aktar (Excel)",
+  "Optional": "Opsiyonel",
+  "Required Documents Manager": "Gerekli Belgeler Yöneticisi",
+  "Documents listed here appear automatically on every student's checklist. Tick Optional for a document students don't strictly have to upload; it still shows on their checklist, just without the required warning.": "Burada listelenen belgeler otomatik olarak her öğrencinin kontrol listesinde görünür. Öğrencilerin kesinlikle yüklemesi gerekmeyen bir belge için Opsiyonel seçeneğini işaretleyin; bu belge kontrol listesinde görünmeye devam eder, yalnızca zorunlu uyarısı olmadan görünür.",
+  "Mail Templates": "E-posta Şablonları",
+  "Student Guide": "Öğrenci Rehberi",
+  "This guide is shown to students on their Required Documents Checklist page. Use it for reminders or extra instructions.": "Bu rehber öğrencilerin Gerekli Belgeler Kontrol Listesi sayfasında gösterilir. Hatırlatıcılar veya ek talimatlar için kullanın.",
+  "Template Name": "Şablon Adı",
+  "Subject": "Konu",
+  "Body placeholders:": "Gövde yer tutucuları:",
+  "Templates staff can send to students, for example when a required document is missing or incorrect. Send a template from any student's row in the Submissions page.": "Personelin öğrencilere gönderebileceği şablonlar; örneğin gerekli bir belge eksik veya hatalı olduğunda. Bir şablonu Başvurular sayfasındaki herhangi bir öğrenci satırından gönderebilirsiniz.",
+  "My Residence Permit Status": "İkamet Belgesi Durumum",
+  "Student ID": "Öğrenci Numarası",
+  "Name Surname": "Ad Soyad",
+  "Email": "E-posta",
+  "YKN": "YKN",
+  "Residence Permit Validity": "İkamet Belgesi Geçerliliği",
+  "File Status": "Dosya Durumu",
+  "Required Documents Checklist": "Gerekli Belgeler Kontrol Listesi",
+  "Send Mail": "E-posta Gönder",
+  "Template": "Şablon",
+  "Note to insert (reason, missing item, etc.)": "Eklenecek not (sebep, eksik öğe vb.)",
+  "Preview": "Önizleme",
+  "Cancel": "İptal",
+  "Open in Mail Client": "E-posta İstemcisinde Aç",
+  "Uploaded Documents": "Yüklenen Belgeler",
+  "Close": "Kapat",
+  "Save Guide": "Rehberi Kaydet",
+  "Add Template": "Şablon Ekle",
+  "Upload": "Yükle",
+  "Download": "İndir",
+  "View": "Görüntüle",
+  "Yes": "Evet",
+  "No": "Hayır",
+  "Not submitted yet": "Henüz gönderilmedi",
+  "Under review": "İnceleniyor",
+  "Returned: missing documents": "Geri gönderildi: eksik belge",
+  "Add a new required document...": "Yeni bir gerekli belge ekle...",
+  "Upload each required document below. Once every required document is uploaded, click \"Send to International Office for Review\" to submit your file online, no physical delivery is required.": "Aşağıdaki gerekli belgelerin her birini yükleyin. Tüm gerekli belgeler yüklendiğinde, dosyanızı çevrimiçi olarak göndermek için \"Uluslararası Ofise İncelemeye Gönder\" butonuna tıklayın, fiziksel teslim gerekmez.",
+  "Send to International Office for Review": "Uluslararası Ofise İncelemeye Gönder",
+  "Resend to International Office": "Uluslararası Ofise Yeniden Gönder",
+  "Upload all required documents to enable sending.": "Göndermeyi etkinleştirmek için tüm gerekli belgeleri yükleyin.",
+  "Your file has been approved. No further action is needed.": "Dosyanız onaylandı. Başka bir işlem yapmanıza gerek yok.",
+  "Upload your required documents and click \"Send to International Office for Review\" once your file is complete.": "Gerekli belgelerinizi yükleyin ve dosyanız tamamlandığında \"Uluslararası Ofise İncelemeye Gönder\" butonuna tıklayın.",
+  "Your file has been sent to the International Office and is under review.": "Dosyanız Uluslararası Ofise gönderildi ve inceleniyor.",
+  "Please check the required documents checklist, correct the issue, and send your file again.": "Lütfen gerekli belgeler kontrol listesini inceleyin, sorunu düzeltin ve dosyanızı tekrar gönderin.",
+  "Your file has been approved by the International Office.": "Dosyanız Uluslararası Ofis tarafından onaylandı.",
+  "Documents the student has uploaded for review. These uploaded files are the official submission.": "Öğrencinin incelenmek üzere yüklediği belgeler. Bu yüklenen dosyalar resmi başvurudur.",
+  "Download All (Merged PDF)": "Tümünü İndir (Birleştirilmiş PDF)",
+  "Merging…": "Birleştiriliyor…",
+  "This student hasn't uploaded any documents yet.": "Bu öğrenci henüz herhangi bir belge yüklemedi.",
+  "None of this student's uploaded files could be read as PDFs.": "Bu öğrencinin yüklediği dosyaların hiçbiri PDF olarak okunamadı.",
+  "Something went wrong while merging the documents.": "Belgeler birleştirilirken bir hata oluştu.",
+  "The PDF merging library failed to load. Please check your internet connection and try again.": "PDF birleştirme kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.",
+  "Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again.": "Buraya yalnızca PDF dosyaları yüklenebilir. Lütfen belgenizi PDF olarak dönüştürüp tekrar deneyin."
+};
+
+function t(str) {
+  return currentLang === "tr" ? (TR[str] || str) : str;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById("langBtnEN").classList.toggle("active", lang === "en");
+  document.getElementById("langBtnTR").classList.toggle("active", lang === "tr");
+  applyStaticTranslations();
+  if (role) { renderSidebar(); renderContent(); }
+}
+
+function applyStaticTranslations() {
+  document.getElementById("lblOnline").textContent = t("Online");
+  document.getElementById("lblLogout").textContent = t("Log out");
+  document.getElementById("lblMenuProcess").textContent = t("Residence Permit Process");
+  document.getElementById("lblMenuContact").textContent = t("Contact International Office");
+  
+  // Modals text translations
+  const sendMailHead = document.getElementById("lblSendMailHead");
+  if (sendMailHead) sendMailHead.textContent = t("Send Mail");
+  
+  const templateLabel = document.getElementById("lblTemplateLabel");
+  if (templateLabel) templateLabel.textContent = t("Template");
+  
+  const noteInsertLabel = document.getElementById("lblNoteInsertLabel");
+  if (noteInsertLabel) noteInsertLabel.textContent = t("Note to insert (reason, missing item, etc.)");
+  
+  const previewLabel = document.getElementById("lblPreviewLabel");
+  if (previewLabel) previewLabel.textContent = t("Preview");
+  
+  const cancelBtn = document.getElementById("lblCancelBtn");
+  if (cancelBtn) cancelBtn.textContent = t("Cancel");
+  
+  const openClientBtn = document.getElementById("lblOpenClientBtn");
+  if (openClientBtn) openClientBtn.textContent = t("Open in Mail Client");
+  
+  const uploadedDocsHead = document.getElementById("lblUploadedDocsHead");
+  if (uploadedDocsHead) uploadedDocsHead.textContent = t("Uploaded Documents");
+  
+  const docsReferenceText = document.getElementById("lblDocsReferenceText");
+  if (docsReferenceText) docsReferenceText.textContent = t("Documents the student has uploaded for review. These uploaded files are the official submission.");
+  
+  const closeBtn = document.getElementById("lblCloseBtn");
+  if (closeBtn) closeBtn.textContent = t("Close");
+
+  const mergeDocsLabel = document.getElementById("lblMergeDocsBtn");
+  if (mergeDocsLabel) mergeDocsLabel.textContent = t("Download All (Merged PDF)");
+}
+
+let mailContext = null; 
+ 
+function email(id) { return `${id}@isik.edu.tr`; }
+function getStudent(id) { return students.find(s => s.id === id); }
+function splitName(fullName) {
+  const parts = fullName.trim().split(/\s+/);
+  const last = parts.length > 1 ? parts.pop() : "";
+  return { first: parts.join(" "), last };
+}
+ 
+/* =====================================================================
+   LOGIN / LOGOUT
+===================================================================== */
+function login(r) {
+  role = r;
+  document.getElementById("loginScreen").classList.add("hidden");
+  document.getElementById("appShell").classList.remove("hidden");
+  applyStaticTranslations();
+ 
+  if (r === "student") {
+    const s = getStudent(CURRENT_STUDENT_ID);
+    document.getElementById("userLabel").textContent = s.name.toUpperCase();
+    document.getElementById("userAvatar").textContent = initials(s.name);
+    activeSection = "status";
+  } else {
+    document.getElementById("userLabel").textContent = "OFFICE STAFF";
+    document.getElementById("userAvatar").textContent = "OS";
+    activeSection = "submissions";
+  }
+  renderSidebar();
+  renderContent();
+}
+ 
+function logout() {
+  role = null;
+  document.getElementById("appShell").classList.add("hidden");
+  document.getElementById("loginScreen").classList.remove("hidden");
+}
+ 
+function initials(name) {
+  return name.split(" ").map(p => p[0]).join("").toUpperCase();
+}
+ 
+/* =====================================================================
+   SIDEBAR
+===================================================================== */
+function renderSidebar() {
+  const el = document.getElementById("sidebar");
+  if (role === "student") {
+    el.innerHTML = `
+      <div class="sidebar-heading">${t("Student")}</div>
+      ${sideLink("status", t("My Status"))}
+      ${sideLink("checklist", t("Required Documents Checklist"))}
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="sidebar-heading">${t("Office")}</div>
+      ${sideLink("submissions", t("Submissions"))}
+      ${sideLink("docs", t("Required Documents Manager"))}
+    `;
+  }
+}
+ 
+function sideLink(key, label) {
+  const active = activeSection === key ? "active" : "";
+  return `<div class="sidebar-link ${active}" onclick="goTo('${key}')">${label}</div>`;
+}
+ 
+function goTo(key) {
+  activeSection = key;
+  renderSidebar();
+  renderContent();
+}
+ 
+/* =====================================================================
+   CONTENT ROUTER
+===================================================================== */
+function renderContent() {
+  const el = document.getElementById("content");
+  if (role === "student") {
+    if (activeSection === "status") el.innerHTML = studentStatusView();
+    if (activeSection === "checklist") el.innerHTML = studentChecklistView();
+  } else {
+    if (activeSection === "submissions") el.innerHTML = officeSubmissionsView();
+    if (activeSection === "docs") el.innerHTML = officeDocsView();
+  }
+  if (role === "office" && activeSection === "submissions") filterSubmissions();
+}
+ 
+/* =====================================================================
+   STATUS BADGE HELPERS
+===================================================================== */
+function todayStr() {
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${dd}.${mm}.${d.getFullYear()}`;
+}
+
+function todayISO() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
+
+function displayDate(iso) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  return `${d}.${m}.${y}`;
+}
+
+function allRequiredUploaded(s) {
+  if (!s.documents) return false;
+  return requiredDocs.every((doc, i) => doc.optional || s.documents[i]);
+}
+
+function statusBadge(s) {
+  if (!s.submitted) {
+    return `<span class="badge badge-gray">${t("Not submitted yet")}</span>`;
+  }
+  if (s.status === "rejected") {
+    const sub = s.note ? `Reason: ${s.note}` : "";
+    return `<span class="badge badge-red">${t("Returned: missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+  }
+  if (s.status === "approved") {
+    return `<span class="badge badge-green">${t("Approved")}</span>`;
+  }
+  const sub = s.submittedDate ? `Submitted ${displayDate(s.submittedDate)}` : "";
+  return `<span class="badge badge-amber">${t("Under review")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+}
+ 
+/* =====================================================================
+   STUDENT: MY STATUS
+===================================================================== */
+function studentStatusView() {
+  const s = getStudent(CURRENT_STUDENT_ID);
+  return `
+    <div class="banner">${t("My Residence Permit Status")}</div>
+    <div class="panel">
+      <div class="detail-grid">
+        <div class="label">${t("Student ID")}</div><div class="value">${s.id}</div>
+        <div class="label">${t("Name Surname")}</div><div class="value">${s.name}</div>
+        <div class="label">${t("Email")}</div><div class="value"><a href="mailto:${email(s.id)}">${email(s.id)}</a></div>
+        <div class="label">${t("YKN")}</div><div class="value">${s.ykn ? s.ykn : '<span class="muted">Not yet assigned by office</span>'}</div>
+        <div class="label">${t("Residence Permit Validity")}</div><div class="value">${s.validity}</div>
+        <div class="label">${t("File Status")}</div><div class="value">${statusBadge(s)}</div>
+      </div>
+ 
+      ${!s.submitted ? `
+      <div style="margin-top:20px;" class="note">
+        ${t('Upload your required documents and click "Send to International Office for Review" once your file is complete.')}
+      </div>` : s.status === "rejected" ? `
+      <div style="margin-top:20px;" class="note">
+        ${t("Please check the required documents checklist, correct the issue, and send your file again.")}
+      </div>` : s.status === "approved" ? `
+      <div style="margin-top:20px;" class="note">
+        ${t("Your file has been approved by the International Office.")}
+      </div>` : `
+      <div style="margin-top:20px;" class="note">
+        ${t("Your file has been sent to the International Office and is under review.")}
+      </div>`}
+    </div>
+  `;
+}
+ 
+/* =====================================================================
+   STUDENT: CHECKLIST
+===================================================================== */
+function studentChecklistView() {
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (!s.documents) s.documents = {};
+  const items = requiredDocs.map((doc, i) => {
+    const uploaded = s.documents[i];
+    return `
+    <div class="checklist-item" style="flex-wrap:wrap;">
+      <span style="flex:1;min-width:220px;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
+      <span style="width:190px;flex-shrink:0;">${uploaded
+          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;" title="${uploaded.name}">Uploaded</span>`
+          : doc.optional
+            ? `<span class="muted" style="font-weight:600;font-size:12.5px;">Not uploaded (optional)</span>`
+            : `<span style="color:#b91c1c;font-weight:600;font-size:12.5px;">Not uploaded (required)</span>`}</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <label class="btn btn-plain" style="margin:0;cursor:pointer;">
+          ${ICONS.upload} ${uploaded ? "Replace" : t("Upload")}
+          <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadChecklistDoc(${i}, this)" />
+        </label>
+      </div>
+    </div>
+  `;
+  }).join("");
+
+  const ready = allRequiredUploaded(s);
+  const sendLabel = s.submitted ? t("Resend to International Office") : t("Send to International Office for Review");
+  const footer = s.status === "approved"
+    ? `<div class="note mb" style="margin-top:16px;">${t("Your file has been approved. No further action is needed.")}</div>`
+    : `
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+        ${!ready ? `<span class="muted" style="font-size:12px;">${t("Upload all required documents to enable sending.")}</span>` : ""}
+        <button class="btn btn-solid" ${ready ? "" : "disabled"} onclick="submitToOffice()">${ICONS.upload} ${sendLabel}</button>
+      </div>
+    `;
+
+  return `
+    <div class="banner">${t("Required Documents Checklist")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t('Upload each required document below. Once every required document is uploaded, click "Send to International Office for Review" to submit your file online, no physical delivery is required.')}
+      </div>
+      ${officeGuide ? `<div class="note mb" style="white-space:pre-wrap;">${officeGuide}</div>` : ""}
+      ${items}
+      ${footer}
+    </div>
+  `;
+}
+ 
+function uploadChecklistDoc(i, inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  if (!isPdf) {
+    alert(t("Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again."));
+    inputEl.value = "";
+    return;
+  }
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (!s.documents) s.documents = {};
+  if (s.documents[i] && s.documents[i].url) URL.revokeObjectURL(s.documents[i].url);
+  s.documents[i] = { name: file.name, url: URL.createObjectURL(file), file: file };
+  s.checklist[i] = true;
+  renderContent();
+}
+
+function submitToOffice() {
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (!allRequiredUploaded(s)) return;
+  s.submitted = true;
+  s.status = "pending_review";
+  s.note = "";
+  s.submittedDate = todayISO();
+  goTo("status");
+}
+ 
+/* =====================================================================
+   MAIL TEMPLATES
+===================================================================== */
+function openMailModal(studentId, missingDoc, pickupCity) {
+  const s = getStudent(studentId);
+  if (!s) return;
+  mailContext = { studentId, missingDoc: missingDoc || "", pickupCity: pickupCity || "" };
+  document.getElementById("mailModalName").textContent = `${s.name} (${email(s.id)})`;
+  const select = document.getElementById("mailTemplateSelect");
+  select.innerHTML = mailTemplates.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+  document.getElementById("mailNote").value = "";
+  updateMailPreview();
+  document.getElementById("mailOverlay").classList.add("show");
+}
+ 
+function fillTemplate(str, s, note, missingDoc, pickupCity) {
+  return str
+    .replaceAll("{{name}}", s.name)
+    .replaceAll("{{studentId}}", s.id)
+    .replaceAll("{{note}}", note || "the reason noted by the office")
+    .replaceAll("{{missingDoc}}", missingDoc || "the missing document")
+    .replaceAll("{{missingDocsReason}}", note || "the reason noted by the office")
+    .replaceAll("{{pickupcity}}", pickupCity || "the campus noted by the office");
+}
+ 
+function updateMailPreview() {
+  if (!mailContext) return;
+  const s = getStudent(mailContext.studentId);
+  const tmplId = document.getElementById("mailTemplateSelect").value;
+  const tmpl = mailTemplates.find(t => t.id === tmplId) || mailTemplates[0];
+  const note = document.getElementById("mailNote").value.trim();
+  const subject = fillTemplate(tmpl.subject, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const body = fillTemplate(tmpl.body, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  document.getElementById("mailPreview").textContent = `Subject: ${subject}\n\n${body}`;
+}
+ 
+function sendMailNow() {
+  const s = getStudent(mailContext.studentId);
+  const tmplId = document.getElementById("mailTemplateSelect").value;
+  const tmpl = mailTemplates.find(t => t.id === tmplId) || mailTemplates[0];
+  const note = document.getElementById("mailNote").value.trim();
+  const subject = fillTemplate(tmpl.subject, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const body = fillTemplate(tmpl.body, s, note, mailContext.missingDoc, mailContext.pickupCity);
+  const href = `mailto:${email(s.id)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  window.location.href = href;
+  closeMailModal();
+}
+ 
+function closeMailModal() {
+  document.getElementById("mailOverlay").classList.remove("show");
+  mailContext = null;
+}
+ 
+/* =====================================================================
+   OFFICE: VIEW UPLOADED DOCUMENTS
+===================================================================== */
+let currentDocsStudentId = null;
+
+function openDocsModal(studentId) {
+  const s = getStudent(studentId);
+  if (!s) return;
+  if (!s.documents) s.documents = {};
+  currentDocsStudentId = studentId;
+  document.getElementById("docsModalName").textContent = `${s.name} (${s.id})`;
+ 
+  const rows = requiredDocs.map((doc, i) => {
+    const uploaded = s.documents[i];
+    return `
+    <div class="checklist-item" style="flex-wrap:wrap;">
+      <span style="flex:1;min-width:180px;white-space:normal;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
+      <span style="width:150px;flex-shrink:0;">${uploaded
+          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;">Uploaded</span>`
+          : `<span class="badge badge-gray" style="white-space:nowrap;">${doc.optional ? "Not uploaded (optional)" : "Not uploaded"}</span>`}</span>
+      <div style="display:flex;gap:14px;flex-shrink:0;align-items:center;">
+        ${uploaded
+          ? `<a href="${uploaded.url}" target="_blank" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("View")}</a>
+             <a href="${uploaded.url}" download="${uploaded.name}" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("Download")}</a>`
+          : ""}
+      </div>
+    </div>`;
+  }).join("");
+ 
+  document.getElementById("docsModalBody").innerHTML = rows;
+  document.getElementById("docsOverlay").classList.add("show");
+
+  const mergeBtn = document.getElementById("mergeDocsBtn");
+  if (mergeBtn) {
+    const hasUploads = requiredDocs.some((doc, i) => s.documents[i]);
+    mergeBtn.disabled = !hasUploads;
+    mergeBtn.title = hasUploads ? "" : "This student hasn't uploaded any documents yet.";
+  }
+}
+ 
+function closeDocsModal() {
+  document.getElementById("docsOverlay").classList.remove("show");
+  currentDocsStudentId = null;
+}
+
+/* =====================================================================
+   OFFICE: MERGE & DOWNLOAD ALL UPLOADED DOCUMENTS AS ONE PDF
+===================================================================== */
+async function mergeAndDownloadDocs() {
+  const s = getStudent(currentDocsStudentId);
+  if (!s || !s.documents) return;
+
+  const uploadedFiles = requiredDocs
+    .map((doc, i) => s.documents[i])
+    .filter(Boolean);
+
+  if (!uploadedFiles.length) {
+    alert(t("This student hasn't uploaded any documents yet."));
+    return;
+  }
+
+  const btn = document.getElementById("mergeDocsBtn");
+  const btnLabel = document.getElementById("lblMergeDocsBtn");
+  const originalLabel = btnLabel ? btnLabel.textContent : "";
+  if (btn) btn.disabled = true;
+  if (btnLabel) btnLabel.textContent = t("Merging…");
+
+  try {
+    if (typeof PDFLib === "undefined") {
+      alert(t("The PDF merging library failed to load. Please check your internet connection and try again."));
+      return;
+    }
+
+    const mergedPdf = await PDFLib.PDFDocument.create();
+    let skipped = 0;
+
+    for (const file of uploadedFiles) {
+      try {
+        const bytes = file.file
+          ? await file.file.arrayBuffer()
+          : await fetch(file.url).then(r => r.arrayBuffer());
+        const srcPdf = await PDFLib.PDFDocument.load(bytes);
+        const copiedPages = await mergedPdf.copyPages(srcPdf, srcPdf.getPageIndices());
+        copiedPages.forEach(page => mergedPdf.addPage(page));
+      } catch (err) {
+        console.warn(`Could not merge "${file.name}"; it may not be a valid PDF.`, err);
+        skipped++;
+      }
+    }
+
+    if (mergedPdf.getPageCount() === 0) {
+      alert(t("None of this student's uploaded files could be read as PDFs."));
+      return;
+    }
+
+    const mergedBytes = await mergedPdf.save();
+    const blob = new Blob([mergedBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const safeName = (s.name || "student").replace(/[^a-z0-9]+/gi, "_");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${s.id}_${safeName}_documents.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+    if (skipped > 0) {
+      alert(t(`Note: ${skipped} file(s) could not be merged and were skipped.`));
+    }
+  } catch (err) {
+    console.error(err);
+    alert(t("Something went wrong while merging the documents."));
+  } finally {
+    if (btn) btn.disabled = false;
+    if (btnLabel) btnLabel.textContent = originalLabel;
+  }
+}
+ 
+/* =====================================================================
+   OFFICE: SUBMISSIONS
+===================================================================== */
+function reviewStatusOptions(selected) {
+  const options = [
+    ["pending_review", "Pending Review"],
+    ["approved", "Approved"],
+    ["rejected", "Rejected: missing documents"],
+  ];
+  return options.map(([val, label]) =>
+    `<option value="${val}" ${selected === val ? "selected" : ""}>${label}</option>`
+  ).join("");
+}
+
+function officeSubmissionsView() {
+  return `
+    <div class="banner">${t("Submissions")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t('Students upload their documents online and click "Send to International Office for Review" once their file is complete. Review each submission below, approve it or send it back for corrections, and download all files together.')}
+      </div>
+      <div class="table-toolbar" style="justify-content:flex-start;margin:0;flex-wrap:wrap;">
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("Search")}</label>
+        <div style="position:relative;display:inline-flex;align-items:center;">
+          <span style="position:absolute;left:9px;display:flex;color:var(--muted);pointer-events:none;">${ICONS.search}</span>
+          <input type="text" id="subSearch" placeholder="${t('Search by name or Student ID')}" oninput="filterSubmissions()" style="width:220px;padding-left:29px;" />
+        </div>
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("From")}</label>
+        <input type="date" id="subDateFrom" onchange="filterSubmissions()" style="width:150px;" />
+        <label class="muted" style="font-size:12px;font-weight:600;">${t("To")}</label>
+        <input type="date" id="subDateTo" onchange="filterSubmissions()" style="width:150px;" />
+        <button class="btn btn-plain" onclick="clearSubmissionSearch()" style="font-size:12px;">${t("Clear")}</button>
+      </div>
+    </div>
+
+    <div class="flex-between mb">
+      <div style="display:flex;gap:8px;">
+        <button class="btn ${submissionsTab === "not_approved" ? "btn-solid" : "btn-plain"}" onclick="setSubmissionsTab('not_approved')">${t("Not Approved")}</button>
+        <button class="btn ${submissionsTab === "approved" ? "btn-solid" : "btn-plain"}" onclick="setSubmissionsTab('approved')">${t("Approved")}</button>
+      </div>
+      <button class="btn btn-plain" onclick="exportSubmissionsExcel()">${ICONS.download} ${t("Export List (Excel)")}</button>
+    </div>
+    <div id="submissionsList"></div>
+  `;
+}
+
+function setSubmissionsTab(tab) {
+  submissionsTab = tab;
+  renderContent();
+}
+
+function getFilteredSubmissions() {
+  const q = (document.getElementById("subSearch")?.value || "").toLowerCase().trim();
+  const from = document.getElementById("subDateFrom")?.value || "";
+  const to = document.getElementById("subDateTo")?.value || "";
+  const submitted = students.filter(s => s.submitted);
+  const tabFiltered = submitted.filter(s => submissionsTab === "approved" ? s.status === "approved" : s.status !== "approved");
+  return tabFiltered.filter(s => {
+    const matchesText = !q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q);
+    const matchesFrom = !from || (s.submittedDate && s.submittedDate >= from);
+    const matchesTo = !to || (s.submittedDate && s.submittedDate <= to);
+    return matchesText && matchesFrom && matchesTo;
+  });
+}
+
+function filterSubmissions() {
+  const listEl = document.getElementById("submissionsList");
+  if (!listEl) return;
+  const filtered = getFilteredSubmissions();
+  const hasAny = students.some(s => s.submitted && (submissionsTab === "approved" ? s.status === "approved" : s.status !== "approved"));
+  listEl.innerHTML = filtered.length
+    ? submissionsTable(filtered)
+    : `<div class="panel muted">${hasAny ? t("No submissions match this search.") : t("No submissions yet.")}</div>`;
+}
+
+function clearSubmissionSearch() {
+  const q = document.getElementById("subSearch");
+  const from = document.getElementById("subDateFrom");
+  const to = document.getElementById("subDateTo");
+  if (q) q.value = "";
+  if (from) from.value = "";
+  if (to) to.value = "";
+  filterSubmissions();
+}
+
+function submissionsTable(list) {
+  const rows = list.map(s => `
+    <tr>
+      <td>${s.id}</td>
+      <td><span style="color:var(--navy);text-decoration:underline;cursor:pointer;" onclick="openDocsModal('${s.id}')" title="View uploaded documents">${s.name}</span></td>
+      <td>${s.ykn ? s.ykn : '<span class="muted">-</span>'}</td>
+      <td>${s.submittedDate ? displayDate(s.submittedDate) : '<span class="muted">-</span>'}</td>
+      <td>
+        <select onchange="updateSubmissionStatus('${s.id}', this.value)">
+          ${reviewStatusOptions(s.status)}
+        </select>
+      </td>
+      <td style="min-width:170px;">
+        ${s.status === "rejected" ? `
+        <select style="max-width:220px;" onchange="updateStudentField('${s.id}','note', this.value)">
+          <option value="">Select missing document...</option>
+          ${requiredDocs.map(doc => `<option value="${doc.text.replace(/"/g, "&quot;")}" ${s.note === doc.text ? "selected" : ""}>${doc.text}</option>`).join("")}
+        </select>` : `<span class="muted">Not applicable</span>`}
+      </td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-plain btn-icon" onclick="openDocsModal('${s.id}')" title="View uploaded documents">${ICONS.eye}</button>
+        <button class="btn btn-plain btn-icon" onclick="openMailModal('${s.id}', '${(s.note || "").replace(/'/g, "\\'")}', '')" title="Send template mail">${ICONS.mail}</button>
+      </td>
+    </tr>
+  `).join("");
+
+  return `
+    <div class="panel" style="padding:0;">
+    <div style="overflow-x:auto;">
+    <table style="min-width:950px;">
+      <thead>
+        <tr>
+          <th>${t("Student ID")}</th>
+          <th>${t("Name Surname")}</th>
+          <th>${t("YKN")}</th>
+          <th>${t("Submitted Date")}</th>
+          <th>${t("Status")}</th>
+          <th>${t("Missing Document")}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    </div>
+    </div>
+  `;
+}
+
+function updateStudentField(id, field, value) {
+  const s = getStudent(id);
+  if (!s) return;
+  s[field] = value;
+  renderContent();
+}
+
+function updateSubmissionStatus(id, status) {
+  const s = getStudent(id);
+  if (!s) return;
+  s.status = status;
+  if (status !== "rejected") s.note = "";
+  renderContent();
+}
+
+function exportSubmissionsExcel() {
+  const list = getFilteredSubmissions();
+  if (!list.length) {
+    alert(t("No submissions match this search."));
+    return;
+  }
+  const rows = list.map(s => {
+    const { first, last } = splitName(s.name);
+    const statusLabel = s.status === "approved" ? "Onaylandı" : (s.status === "rejected" ? "Reddedildi" : "İnceleniyor");
+    return `
+    <tr>
+      <td>${s.id}</td>
+      <td>${first}</td>
+      <td>${last}</td>
+      <td>${email(s.id)}</td>
+      <td>${s.ykn || ""}</td>
+      <td>${s.submittedDate ? displayDate(s.submittedDate) : ""}</td>
+      <td>${statusLabel}</td>
+      <td>${s.status === "rejected" ? (s.note || "") : ""}</td>
+    </tr>
+  `;
+  }).join("");
+
+  const html = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+    <head><meta charset="UTF-8"></head>
+    <body>
+      <table border="1" cellspacing="0" cellpadding="4">
+        <tr><td colspan="8" style="font-size:16px;font-weight:bold;text-align:center;">Başvuru Listesi</td></tr>
+        <tr><td colspan="8"></td></tr>
+        <tr style="font-weight:bold;background:#eee;">
+          <td>Öğrenci No</td>
+          <td>Adı</td>
+          <td>Soyadı</td>
+          <td>E-posta</td>
+          <td>YKN</td>
+          <td>Gönderim Tarihi</td>
+          <td>Durum</td>
+          <td>Eksik Belge</td>
+        </tr>
+        ${rows}
+      </table>
+    </body>
+    </html>
+  `;
+
+  const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `Basvurular_${todayISO()}.xls`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+ 
+/* =====================================================================
+   OFFICE: REQUIRED DOCUMENTS MANAGER
+===================================================================== */
+function officeDocsView() {
+  const items = requiredDocs.map((doc, i) => `
+    <div class="checklist-item" style="justify-content:space-between;">
+      <span>${doc.text}</span>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;">
+          <input type="checkbox" ${doc.optional ? "checked" : ""} onchange="toggleDocOptional(${i}, this.checked)" />
+          ${t("Optional")}
+        </label>
+        <button class="btn btn-danger btn-icon" onclick="removeDoc(${i})">${ICONS.trash}</button>
+      </div>
+    </div>
+  `).join("");
+ 
+  const templates = mailTemplates.map((tItem, i) => `
+    <div class="panel" style="margin-bottom:14px;padding:16px;">
+      <div class="field">
+        <label>${t("Template Name")}</label>
+        <input type="text" value="${tItem.name.replace(/"/g, "&quot;")}" onchange="updateTemplate(${i}, 'name', this.value)" />
+      </div>
+      <div class="field">
+        <label>${t("Subject")}</label>
+        <input type="text" value="${tItem.subject.replace(/"/g, "&quot;")}" onchange="updateTemplate(${i}, 'subject', this.value)" />
+      </div>
+      <div class="field">
+        <label>${t("Body placeholders:")} {{name}}, {{studentId}}, {{note}}, {{missingDoc}}, {{missingDocsReason}}, {{pickupcity}}</label>
+        <textarea rows="6" style="width:100%;font-family:inherit;font-size:13px;padding:8px;border:1px solid #cbd5e1;border-radius:4px;" onchange="updateTemplate(${i}, 'body', this.value)">${tItem.body}</textarea>
+      </div>
+      <div style="text-align:right;">
+        <button class="btn btn-danger btn-icon" onclick="removeTemplate(${i})" title="Delete template">${ICONS.trash}</button>
+      </div>
+    </div>
+  `).join("");
+ 
+  return `
+    <div class="banner">${t("Required Documents Manager")}</div>
+    <div class="panel">
+      <div class="note mb">${t("Documents listed here appear automatically on every student's checklist. Tick Optional for a document students don't strictly have to upload; it still shows on their checklist, just without the required warning.")}</div>
+      ${items}
+      <div class="flex-between" style="margin-top:16px;">
+        <input type="text" id="newDocInput" placeholder="${t("Add a new required document...")}" style="flex:1;" />
+        <button class="btn btn-solid" onclick="addDoc()">${ICONS.plus} ${t("Upload")}</button>
+      </div>
+    </div>
+ 
+    <div class="banner">${t("Student Guide")}</div>
+    <div class="panel">
+      <div class="note mb">${t("This guide is shown to students on their Required Documents Checklist page. Use it for reminders or extra instructions.")}</div>
+      <textarea id="guideInput" rows="4" style="width:100%;font-family:inherit;font-size:13px;padding:8px;border:1px solid #cbd5e1;border-radius:4px;">${officeGuide}</textarea>
+      <div style="text-align:right;margin-top:10px;">
+        <button class="btn btn-solid" onclick="saveGuide()">${t("Save Guide")}</button>
+      </div>
+    </div>
+ 
+    <div class="banner">${t("Mail Templates")}</div>
+    <div class="panel">
+      <div class="note mb">
+        ${t("Templates staff can send to students, for example when a required document is missing or incorrect. Send a template from any student's row in the Submissions page.")}
+      </div>
+      ${templates}
+      <button class="btn btn-solid" onclick="addTemplate()">${ICONS.plus} ${t("Add Template")}</button>
+    </div>
+  `;
+}
+ 
+function addDoc() {
+  const input = document.getElementById("newDocInput");
+  if (!input.value.trim()) return;
+  requiredDocs.push({ text: input.value.trim(), optional: false });
+  renderContent();
+}
+ 
+function removeDoc(i) {
+  requiredDocs.splice(i, 1);
+  renderContent();
+}
+
+function toggleDocOptional(i, val) {
+  if (!requiredDocs[i]) return;
+  requiredDocs[i].optional = val;
+  renderContent();
+}
+ 
+function saveGuide() {
+  officeGuide = document.getElementById("guideInput").value;
+  renderContent();
+}
+ 
+function updateTemplate(i, field, value) {
+  mailTemplates[i][field] = value;
+}
+ 
+function addTemplate() {
+  mailTemplates.push({ id: "tmpl-" + Date.now(), name: "New Template", subject: "Subject line", body: "Dear {{name}},\n\n" });
+  renderContent();
+}
+ 
+function removeTemplate(i) {
+  if (!confirm("Delete this template?")) return;
+  mailTemplates.splice(i, 1);
+  renderContent();
+}
+ 
+</script>
+</body>
+<footer style="text-align: center; padding: 20px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 40px;">
+  Made by: <a href="https://github.com/Nettlex" target="_blank" style="color: var(--navy); text-decoration: none; font-weight: 600;">Yusuf K.U.</a>
+</footer>
+</html>
