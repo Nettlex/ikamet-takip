@@ -13,6 +13,15 @@
     --card:#F8FAFC;
     --text:#1e293b;
     --muted:#64748b;
+    --success-bg:#f2f7f4;
+    --success-text:#3f6b52;
+    --success-border:#dce7e0;
+    --danger-bg:#faf3f2;
+    --danger-text:#9c5049;
+    --danger-border:#eeddd9;
+    --warn-bg:#faf6ee;
+    --warn-text:#93703c;
+    --warn-border:#ece1c9;
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;font-size:13px;color:var(--text);background:#fff;overflow-x:hidden;}
@@ -59,8 +68,12 @@
   .btn-plain:hover{background:#f8fafc;}
   .btn-icon{padding:6px 8px;}
   .btn[disabled]{opacity:.4;cursor:not-allowed;}
-  .btn-danger{border-color:#fca5a5;color:#b91c1c;}
-  .btn-danger:hover{background:#fef2f2;}
+  .btn-danger{border-color:var(--danger-border);color:var(--danger-text);}
+  .btn-danger:hover{background:var(--danger-bg);}
+  .btn-soft-danger{background:var(--danger-bg);border:1px solid var(--danger-border);color:var(--danger-text);}
+  .btn-soft-danger:hover{background:#f4e6e3;}
+  .btn-soft-success{background:var(--success-bg);border:1px solid var(--success-border);color:var(--success-text);}
+  .btn-soft-success:hover{background:#e7f0ea;}
  
   /* ---------- Table ---------- */
   table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -72,9 +85,9 @@
  
   /* ---------- Badges ---------- */
   .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;border:1px solid transparent;white-space:nowrap;}
-  .badge-green{background:#f0fdf4;color:#15803d;border-color:#bbf7d0;}
-  .badge-amber{background:#fffbeb;color:#b45309;border-color:#fde68a;}
-  .badge-red{background:#fef2f2;color:#b91c1c;border-color:#fecaca;}
+  .badge-green{background:var(--success-bg);color:var(--success-text);border-color:var(--success-border);}
+  .badge-amber{background:var(--warn-bg);color:var(--warn-text);border-color:var(--warn-border);}
+  .badge-red{background:var(--danger-bg);color:var(--danger-text);border-color:var(--danger-border);}
   .badge-gray{background:#f1f5f9;color:#475569;border-color:#e2e8f0;}
  
   select, input[type=text], input[type=date]{font-size:13px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:4px;color:var(--text);background:#fff;}
@@ -244,11 +257,11 @@ let requiredDocs = [
 ];
 
 let students = [
-  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {}, teslimTesellum: null },
-  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", submitted: true, status: "pending_review", note: "", submittedDate: "2026-08-26", checklist: {}, documents: {}, teslimTesellum: null },
-  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", submitted: true, status: "rejected", note: "Passport scan unreadable", submittedDate: "2026-08-20", checklist: {}, documents: {}, teslimTesellum: null },
-  { id: "20220034", name: "Layla Haddad", validity: "-", ykn: "", submitted: false, status: "not_submitted", note: "", submittedDate: null, checklist: {}, documents: {}, teslimTesellum: null },
-  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", submitted: true, status: "approved", note: "", submittedDate: "2026-08-18", checklist: {}, documents: {}, teslimTesellum: null },
+  { id: "20223045", name: "Ahmet Yılmaz", validity: "15.03.2027", ykn: "99123456780", submitted: false, status: "not_submitted", note: "", previousNote: "", submittedDate: null, mainDocument: null, missingDocument: null, teslimTesellum: null },
+  { id: "20221190", name: "Fatima Al-Sayed", validity: "10.01.2027", ykn: "99887766550", submitted: true, status: "pending_review", note: "", previousNote: "", submittedDate: "2026-08-26", mainDocument: null, missingDocument: null, teslimTesellum: null },
+  { id: "20224871", name: "Ivan Petrov", validity: "22.06.2026", ykn: "99334455660", submitted: true, status: "rejected", note: "Passport scan unreadable", previousNote: "", submittedDate: "2026-08-20", mainDocument: null, missingDocument: null, teslimTesellum: null },
+  { id: "20220034", name: "Layla Haddad", validity: "-", ykn: "", submitted: false, status: "not_submitted", note: "", previousNote: "", submittedDate: null, mainDocument: null, missingDocument: null, teslimTesellum: null },
+  { id: "20223399", name: "Amara Chen", validity: "05.09.2026", ykn: "99556677880", submitted: true, status: "approved", note: "", previousNote: "", submittedDate: "2026-08-18", mainDocument: null, missingDocument: null, teslimTesellum: null },
 ];
 
 let submissionsTab = "not_approved";
@@ -362,13 +375,24 @@ const TR = {
   "Replace Teslim Tesellüm": "Teslim Tesellümü Değiştir",
   "Uploaded": "Yüklendi",
   "Not uploaded": "Yüklenmedi",
+  "Replace": "Değiştir",
+  "Your Merged Application PDF": "Birleştirilmiş Başvuru PDF'iniz",
+  "Upload Missing Document": "Eksik Belgeyi Yükle",
+  "Send Missing Document to Office Again": "Eksik Belgeyi Ofise Tekrar Gönder",
+  "Merge all your required documents into a single PDF, then upload it below. Once uploaded, click \"Send to International Office for Review\" to submit your file online, no physical delivery is required.": "Gerekli tüm belgelerinizi tek bir PDF'de birleştirin, ardından aşağıya yükleyin. Yükledikten sonra dosyanızı çevrimiçi olarak göndermek için \"Uluslararası Ofise İncelemeye Gönder\" butonuna tıklayın, fiziksel teslim gerekmez.",
+  "Documents to include in your merged PDF:": "Birleştirilmiş PDF'inize dahil etmeniz gereken belgeler:",
+  "Upload your merged PDF to enable sending.": "Göndermeyi etkinleştirmek için birleştirilmiş PDF'inizi yükleyin.",
+  "Merged Application PDF": "Birleştirilmiş Başvuru PDF'i",
+  "Missing Document (re-upload)": "Eksik Belge (yeniden yüklendi)",
   "Your Teslim Tesellüm document is ready to download.": "Teslim Tesellüm belgeniz indirilmeye hazır.",
   "Merging…": "Birleştiriliyor…",
   "This student hasn't uploaded any documents yet.": "Bu öğrenci henüz herhangi bir belge yüklemedi.",
   "None of this student's uploaded files could be read as PDFs.": "Bu öğrencinin yüklediği dosyaların hiçbiri PDF olarak okunamadı.",
   "Something went wrong while merging the documents.": "Belgeler birleştirilirken bir hata oluştu.",
   "The PDF merging library failed to load. Please check your internet connection and try again.": "PDF birleştirme kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.",
-  "Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again.": "Buraya yalnızca PDF dosyaları yüklenebilir. Lütfen belgenizi PDF olarak dönüştürüp tekrar deneyin."
+  "Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again.": "Buraya yalnızca PDF dosyaları yüklenebilir. Lütfen belgenizi PDF olarak dönüştürüp tekrar deneyin.",
+  "Previously flagged reason": "Önceden belirtilen sebep",
+  "Previously flagged": "Önceden belirtilen"
 };
 
 function t(str) {
@@ -533,9 +557,8 @@ function displayDate(iso) {
   return `${d}.${m}.${y}`;
 }
 
-function allRequiredUploaded(s) {
-  if (!s.documents) return false;
-  return requiredDocs.every((doc, i) => doc.optional || s.documents[i]);
+function hasMainDocument(s) {
+  return !!s.mainDocument;
 }
 
 function statusBadge(s) {
@@ -544,13 +567,13 @@ function statusBadge(s) {
   }
   if (s.status === "rejected") {
     const sub = s.note ? `Reason: ${s.note}` : "";
-    return `<span class="badge badge-red">${t("Missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+    return `<span style="color:#c0392b;font-weight:700;">${t("Missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
   }
   if (s.status === "approved") {
     return `<span class="badge badge-green">${t("Sent to Göç İdaresi")}</span>`;
   }
   const sub = s.submittedDate ? `Submitted ${displayDate(s.submittedDate)}` : "";
-  return `<span class="badge badge-amber">${t("Under review")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+  return `<span style="color:var(--warn-text);font-weight:700;">${t("Under review")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
 }
  
 /* =====================================================================
@@ -567,7 +590,18 @@ function studentStatusView() {
         <div class="label">${t("Email")}</div><div class="value"><a href="mailto:${email(s.id)}">${email(s.id)}</a></div>
         <div class="label">${t("YKN")}</div><div class="value">${s.ykn ? s.ykn : '<span class="muted">Not yet assigned by office</span>'}</div>
         <div class="label">${t("Residence Permit Validity")}</div><div class="value">${s.validity}</div>
-        <div class="label">${t("File Status")}</div><div class="value">${statusBadge(s)}</div>
+        <div class="label">${t("File Status")}</div>
+        <div class="value" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          ${statusBadge(s)}
+          ${s.status === "rejected" ? (
+            s.missingDocument
+              ? `<button class="btn btn-solid" onclick="submitToOffice()">${ICONS.upload} ${t("Send Missing Document to Office Again")}</button>`
+              : `<label class="btn btn-plain" style="margin:0;cursor:pointer;">
+                   ${ICONS.upload} ${t("Upload Missing Document")}
+                   <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadMissingDocument(this)" />
+                 </label>`
+          ) : ""}
+        </div>
       </div>
  
       ${!s.submitted ? `
@@ -598,34 +632,52 @@ function studentStatusView() {
 ===================================================================== */
 function studentChecklistView() {
   const s = getStudent(CURRENT_STUDENT_ID);
-  if (!s.documents) s.documents = {};
-  const items = requiredDocs.map((doc, i) => {
-    const uploaded = s.documents[i];
-    return `
+  const main = s.mainDocument;
+  const missing = s.missingDocument;
+
+  const docsList = requiredDocs.map(doc => `
+    <li>${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</li>
+  `).join("");
+
+  const mainRow = `
     <div class="checklist-item" style="flex-wrap:wrap;">
-      <span style="flex:1;min-width:220px;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
-      <span style="width:190px;flex-shrink:0;">${uploaded
-          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;" title="${uploaded.name}">Uploaded</span>`
-          : doc.optional
-            ? `<span class="muted" style="font-weight:600;font-size:12.5px;">Not uploaded (optional)</span>`
-            : `<span style="color:#b91c1c;font-weight:600;font-size:12.5px;">Not uploaded (required)</span>`}</span>
+      <span style="flex:1;min-width:220px;">${t("Your Merged Application PDF")}</span>
+      <span style="width:190px;flex-shrink:0;">${main
+          ? `<span style="color:var(--success-text);font-weight:600;font-size:12.5px;" title="${main.name}">${t("Uploaded")}</span>`
+          : `<span style="color:var(--muted);font-weight:600;font-size:12.5px;">${t("Not uploaded")}</span>`}</span>
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
         <label class="btn btn-plain" style="margin:0;cursor:pointer;">
-          ${ICONS.upload} ${uploaded ? "Replace" : t("Upload")}
-          <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadChecklistDoc(${i}, this)" />
+          ${ICONS.upload} ${main ? t("Replace") : t("Upload")}
+          <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadMainDocument(this)" />
         </label>
       </div>
     </div>
   `;
-  }).join("");
 
-  const ready = allRequiredUploaded(s);
+  const missingRow = s.status === "rejected" ? `
+    <div class="checklist-item" style="flex-wrap:wrap;background:var(--danger-bg);border-radius:4px;">
+      <span style="flex:1;min-width:220px;">${t("Missing Document")}${s.note ? `: <span class="muted">${s.note}</span>` : ""}</span>
+      <span style="width:190px;flex-shrink:0;">${missing
+          ? `<span style="color:var(--success-text);font-weight:600;font-size:12.5px;" title="${missing.name}">${t("Uploaded")}</span>`
+          : `<span style="color:var(--danger-text);font-weight:600;font-size:12.5px;">${t("Not uploaded")}</span>`}</span>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        ${missing
+          ? `<button class="btn btn-solid" style="margin:0;" onclick="submitToOffice()">${ICONS.upload} ${t("Send Missing Document to Office Again")}</button>`
+          : `<label class="btn btn-plain" style="margin:0;cursor:pointer;">
+               ${ICONS.upload} ${t("Upload Missing Document")}
+               <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadMissingDocument(this)" />
+             </label>`}
+      </div>
+    </div>
+  ` : "";
+
+  const ready = hasMainDocument(s);
   const sendLabel = s.submitted ? t("Resend to International Office") : t("Send to International Office for Review");
   const footer = s.status === "approved"
     ? `<div class="note mb" style="margin-top:16px;">${t("Your file has been sent to Göç İdaresi. No further action is needed.")}</div>`
     : `
       <div style="margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:12px;">
-        ${!ready ? `<span class="muted" style="font-size:12px;">${t("Upload all required documents to enable sending.")}</span>` : ""}
+        ${!ready ? `<span class="muted" style="font-size:12px;">${t("Upload your merged PDF to enable sending.")}</span>` : ""}
         <button class="btn btn-solid" ${ready ? "" : "disabled"} onclick="submitToOffice()">${ICONS.upload} ${sendLabel}</button>
       </div>
     `;
@@ -634,16 +686,21 @@ function studentChecklistView() {
     <div class="banner">${t("Required Documents Checklist")}</div>
     <div class="panel">
       <div class="note mb">
-        ${t('Upload each required document below. Once every required document is uploaded, click "Send to International Office for Review" to submit your file online, no physical delivery is required.')}
+        ${t('Merge all your required documents into a single PDF, then upload it below. Once uploaded, click "Send to International Office for Review" to submit your file online, no physical delivery is required.')}
       </div>
       ${officeGuide ? `<div class="note mb" style="white-space:pre-wrap;">${officeGuide}</div>` : ""}
-      ${items}
+      <div class="note mb">
+        <strong style="display:block;margin-bottom:6px;">${t("Documents to include in your merged PDF:")}</strong>
+        <ul style="margin:0;padding-left:18px;">${docsList}</ul>
+      </div>
+      ${mainRow}
+      ${missingRow}
       ${footer}
     </div>
   `;
 }
  
-function uploadChecklistDoc(i, inputEl) {
+function uploadMainDocument(inputEl) {
   const file = inputEl.files[0];
   if (!file) return;
   const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
@@ -653,18 +710,32 @@ function uploadChecklistDoc(i, inputEl) {
     return;
   }
   const s = getStudent(CURRENT_STUDENT_ID);
-  if (!s.documents) s.documents = {};
-  if (s.documents[i] && s.documents[i].url) URL.revokeObjectURL(s.documents[i].url);
-  s.documents[i] = { name: file.name, url: URL.createObjectURL(file), file: file };
-  s.checklist[i] = true;
+  if (s.mainDocument && s.mainDocument.url) URL.revokeObjectURL(s.mainDocument.url);
+  s.mainDocument = { name: file.name, url: URL.createObjectURL(file), file: file };
+  renderContent();
+}
+
+function uploadMissingDocument(inputEl) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+  if (!isPdf) {
+    alert(t("Only PDF files can be uploaded here. Please convert or export your document as a PDF and try again."));
+    inputEl.value = "";
+    return;
+  }
+  const s = getStudent(CURRENT_STUDENT_ID);
+  if (s.missingDocument && s.missingDocument.url) URL.revokeObjectURL(s.missingDocument.url);
+  s.missingDocument = { name: file.name, url: URL.createObjectURL(file), file: file };
   renderContent();
 }
 
 function submitToOffice() {
   const s = getStudent(CURRENT_STUDENT_ID);
-  if (!allRequiredUploaded(s)) return;
+  if (!hasMainDocument(s)) return;
   s.submitted = true;
   s.status = "pending_review";
+  if (s.note) s.previousNote = s.note;
   s.note = "";
   s.submittedDate = todayISO();
   goTo("status");
@@ -731,33 +802,42 @@ let currentDocsStudentId = null;
 function openDocsModal(studentId) {
   const s = getStudent(studentId);
   if (!s) return;
-  if (!s.documents) s.documents = {};
   currentDocsStudentId = studentId;
   document.getElementById("docsModalName").textContent = `${s.name} (${s.id})`;
  
-  const rows = requiredDocs.map((doc, i) => {
-    const uploaded = s.documents[i];
-    return `
+  const mainRow = `
     <div class="checklist-item" style="flex-wrap:wrap;">
-      <span style="flex:1;min-width:180px;white-space:normal;">${doc.text}${doc.optional ? ` <span class="muted" style="font-weight:400;">(${t("Optional")})</span>` : ""}</span>
-      <span style="width:150px;flex-shrink:0;">${uploaded
-          ? `<span style="color:#15803d;font-weight:600;font-size:12.5px;">Uploaded</span>`
-          : `<span class="badge badge-gray" style="white-space:nowrap;">${doc.optional ? "Not uploaded (optional)" : "Not uploaded"}</span>`}</span>
+      <span style="flex:1;min-width:180px;white-space:normal;">${t("Merged Application PDF")}</span>
+      <span style="width:150px;flex-shrink:0;">${s.mainDocument
+          ? `<span style="color:var(--success-text);font-weight:600;font-size:12.5px;">${t("Uploaded")}</span>`
+          : `<span style="color:var(--muted);font-weight:600;font-size:12.5px;white-space:nowrap;">${t("Not uploaded")}</span>`}</span>
       <div style="display:flex;gap:14px;flex-shrink:0;align-items:center;">
-        ${uploaded
-          ? `<a href="${uploaded.url}" target="_blank" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("View")}</a>
-             <a href="${uploaded.url}" download="${uploaded.name}" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("Download")}</a>`
+        ${s.mainDocument
+          ? `<a href="${s.mainDocument.url}" target="_blank" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("View")}</a>
+             <a href="${s.mainDocument.url}" download="${s.mainDocument.name}" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("Download")}</a>`
           : ""}
       </div>
     </div>`;
-  }).join("");
+
+  const missingRow = s.missingDocument ? `
+    <div class="checklist-item" style="flex-wrap:wrap;">
+      <span style="flex:1;min-width:180px;white-space:normal;">
+        ${t("Missing Document (re-upload)")}
+        ${s.previousNote ? `<div class="muted" style="font-size:11.5px;margin-top:2px;">${t("Previously flagged reason")}: ${s.previousNote}</div>` : ""}
+      </span>
+      <span style="width:150px;flex-shrink:0;"><span style="color:var(--success-text);font-weight:600;font-size:12.5px;">${t("Uploaded")}</span></span>
+      <div style="display:flex;gap:14px;flex-shrink:0;align-items:center;">
+        <a href="${s.missingDocument.url}" target="_blank" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("View")}</a>
+        <a href="${s.missingDocument.url}" download="${s.missingDocument.name}" style="color:var(--navy);text-decoration:underline;font-size:12.5px;">${t("Download")}</a>
+      </div>
+    </div>` : "";
  
-  document.getElementById("docsModalBody").innerHTML = rows;
+  document.getElementById("docsModalBody").innerHTML = mainRow + missingRow;
   document.getElementById("docsOverlay").classList.add("show");
 
   const mergeBtn = document.getElementById("mergeDocsBtn");
   if (mergeBtn) {
-    const hasUploads = requiredDocs.some((doc, i) => s.documents[i]);
+    const hasUploads = !!s.mainDocument || !!s.missingDocument;
     mergeBtn.disabled = !hasUploads;
     mergeBtn.title = hasUploads ? "" : "This student hasn't uploaded any documents yet.";
   }
@@ -773,11 +853,9 @@ function closeDocsModal() {
 ===================================================================== */
 async function mergeAndDownloadDocs() {
   const s = getStudent(currentDocsStudentId);
-  if (!s || !s.documents) return;
+  if (!s) return;
 
-  const uploadedFiles = requiredDocs
-    .map((doc, i) => s.documents[i])
-    .filter(Boolean);
+  const uploadedFiles = [s.mainDocument, s.missingDocument].filter(Boolean);
 
   if (!uploadedFiles.length) {
     alert(t("This student hasn't uploaded any documents yet."));
@@ -946,11 +1024,12 @@ function submissionsTable(list) {
           <option value="">Select missing document...</option>
           ${requiredDocs.map(doc => `<option value="${doc.text.replace(/"/g, "&quot;")}" ${s.note === doc.text ? "selected" : ""}>${doc.text}</option>`).join("")}
         </select>` : `<span class="muted">Not applicable</span>`}
+        ${s.status !== "rejected" && s.missingDocument && s.previousNote ? `<div class="muted" style="font-size:11px;margin-top:4px;white-space:normal;max-width:220px;">${t("Previously flagged")}: ${s.previousNote}</div>` : ""}
       </td>
       ${showTeslim ? `
       <td style="min-width:190px;">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="badge ${s.teslimTesellum ? "badge-green" : "badge-red"}">${s.teslimTesellum ? t("Uploaded") : t("Not uploaded")}</span>
+          <span style="color:${s.teslimTesellum ? "var(--success-text)" : "var(--danger-text)"};font-weight:600;font-size:12.5px;">${s.teslimTesellum ? t("Uploaded") : t("Not uploaded")}</span>
           <label class="btn btn-plain btn-icon" style="margin:0;cursor:pointer;" title="${s.teslimTesellum ? t("Replace Teslim Tesellüm") : t("Upload Teslim Tesellüm")}">
             ${ICONS.upload}
             <input type="file" accept="application/pdf,.pdf" style="display:none;" onchange="uploadTeslimTesellum('${s.id}', this)" />
@@ -1015,7 +1094,10 @@ function updateSubmissionStatus(id, status) {
   const s = getStudent(id);
   if (!s) return;
   s.status = status;
-  if (status !== "rejected") s.note = "";
+  if (status !== "rejected") {
+    if (s.note) s.previousNote = s.note;
+    s.note = "";
+  }
   renderContent();
 }
 
