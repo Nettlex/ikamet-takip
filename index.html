@@ -340,7 +340,7 @@ const TR = {
   "No": "Hayır",
   "Not submitted yet": "Henüz gönderilmedi",
   "Under review": "İnceleniyor",
-  "Returned: missing documents": "Geri gönderildi: eksik belge",
+  "Missing documents": "Eksik belge",
   "Add a new required document...": "Yeni bir gerekli belge ekle...",
   "Upload each required document below. Once every required document is uploaded, click \"Send to International Office for Review\" to submit your file online, no physical delivery is required.": "Aşağıdaki gerekli belgelerin her birini yükleyin. Tüm gerekli belgeler yüklendiğinde, dosyanızı çevrimiçi olarak göndermek için \"Uluslararası Ofise İncelemeye Gönder\" butonuna tıklayın, fiziksel teslim gerekmez.",
   "Send to International Office for Review": "Uluslararası Ofise İncelemeye Gönder",
@@ -544,7 +544,7 @@ function statusBadge(s) {
   }
   if (s.status === "rejected") {
     const sub = s.note ? `Reason: ${s.note}` : "";
-    return `<span class="badge badge-red">${t("Returned: missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
+    return `<span class="badge badge-red">${t("Missing documents")}</span>${sub ? `<div class="muted" style="font-size:11px;margin-top:3px;">${sub}</div>` : ""}`;
   }
   if (s.status === "approved") {
     return `<span class="badge badge-green">${t("Sent to Göç İdaresi")}</span>`;
@@ -849,7 +849,7 @@ function reviewStatusOptions(selected) {
   const options = [
     ["pending_review", "Pending Review"],
     ["approved", "Sent to Göç İdaresi"],
-    ["rejected", "Rejected: missing documents"],
+    ["rejected", "Missing documents"],
   ];
   return options.map(([val, label]) =>
     `<option value="${val}" ${selected === val ? "selected" : ""}>${label}</option>`
